@@ -8,24 +8,24 @@ namespace GameServer.Core.Interface
     {
     }
 
-    //public interface IAwakeInterface : IBaseSystemInterface
-    //{
-    //    void Awake();
-    //}
+    public interface IAwakeInterface : IBaseSystemInterface
+    {
+        void Awake();
+    }
 
-    //public interface IStartInterface : IBaseSystemInterface
-    //{
-    //    void Start();
-    //}
+    public interface IStartInterface : IBaseSystemInterface
+    {
+        void Start();
+    }
 
-    //public interface IUpdateInterface : IBaseSystemInterface
-    //{
-    //    void Update();
-    //}
+    public interface IUpdateInterface : IBaseSystemInterface
+    {
+        void Update();
+    }
 
-    //public interface ILateUpdateInterface : IBaseSystemInterface
-    //{
-    //    void LateUpdate();
-    //}
+    public interface ILateUpdateInterface : IBaseSystemInterface
+    {
+        void LateUpdate();
+    }
 
 }

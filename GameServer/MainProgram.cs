@@ -1,32 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using GameServer.Core;
+using GameServer.Log;
 
 namespace GameServer
 {
-    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = true,Inherited =true)]
-    class Att:Attribute
-    {
 
-    }
-    [Att]
-    interface baseInter { }
-    interface Inter:baseInter { }
-
-    class MainProgram: Inter
+    class MainProgram
     {
         static void Main(string[] args)
         {
             Game.EventSystem.LoadAssembly(typeof(Game).Assembly);
-            
-            foreach (var item in typeof(Inter ).CustomAttributes)
+
+            Game.Awake();
+            Game.Start();
+            while (true)
             {
-                Console.WriteLine(item);
+                try
+                {
+                    Thread.Sleep(1);
+                    Game.Update();
+                    Game.LateUpdate();
+                }
+                catch (Exception e)
+                {
+                    Logger.WriteException(e);
+                }
             }
-
-
-            Console.ReadLine();
         }
 
     }

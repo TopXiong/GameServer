@@ -1,4 +1,5 @@
 ﻿using GameServer.Core.Attribute;
+using GameServer.Core.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,11 +7,11 @@ using System.Text;
 namespace GameServer.Core.Base
 {
     [ObjectSystem]
-    public class BaseGameObject
+    public abstract class BaseGameObject : IAwakeInterface, IStartInterface,IUpdateInterface,ILateUpdateInterface
     {
-        protected virtual void Awake() { }
-        protected virtual void Start() { }
-        protected virtual void Update() { }
-        protected virtual void LateUpdate() { }
+        public virtual void Awake() { }
+        public virtual void Start() { }
+        public virtual void Update() { }
+        public virtual void LateUpdate() { }
     }
 }

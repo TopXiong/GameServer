@@ -1,13 +1,14 @@
 ﻿using GameServer.Core.Attribute;
+using GameServer.Core.Base;
 using GameServer.Core.Interface;
 using GameServer.Log;
 
 namespace GameServer
 {
     [ObjectSystem]
-    public class Test
+    public class Test: BaseGameObject
     {
-        public void Start()
+        public override void Start()
         {
             Logger.WriteLog("Test Start");
         }
