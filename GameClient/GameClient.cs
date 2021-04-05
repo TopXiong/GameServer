@@ -130,6 +130,16 @@ namespace GameClient
 
         static void Main(string[] args)
         {
+            SocketAsyncEventArgs Args = new SocketAsyncEventArgs();
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect("127.0.0.1", 1234);
+            Console.WriteLine("Start");
+            SocketAsyncEventArgs saea = new SocketAsyncEventArgs();
+            while (true)
+            {
+                Console.Write("Input Message : ");
+            }
+            /*
             GameClient gameClient = new GameClient("127.0.0.1", 1234);
            // GameClient gameClient = new GameClient("192.168.1.106", 1234);
             gameClient.PlayerJoin += delegate (int id) { Console.WriteLine("Player: " + id + "Join"); };
@@ -166,9 +176,11 @@ namespace GameClient
                     case "LeaveRoom":
                         gameClient.LeaveRoom();
                         break;
-                }
 
+                }
+            
             }
+            */
         }
     }
 }

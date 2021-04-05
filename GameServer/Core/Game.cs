@@ -8,7 +8,7 @@ namespace GameServer.Core
     {
         public static EventSystem EventSystem => EventSystem.Instance;
 
-
+        //public 
 
         public static void Awake()
         {
