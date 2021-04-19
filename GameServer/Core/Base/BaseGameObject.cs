@@ -9,6 +9,9 @@ namespace GameServer.Core.Base
     [ObjectSystem]
     public abstract class BaseGameObject : IAwakeInterface, IStartInterface,IUpdateInterface,ILateUpdateInterface
     {
+
+        protected BaseGameObject m_instance;
+
         public virtual void Awake() { }
         public virtual void Start() { }
         public virtual void Update() { }

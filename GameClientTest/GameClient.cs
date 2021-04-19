@@ -40,7 +40,7 @@ namespace GameClient
                 //接收参数  
                 receiveEventArgs.Completed += new EventHandler<SocketAsyncEventArgs>(IO_Completed);
                 receiveEventArgs.UserToken = e.UserToken;
-                receiveEventArgs.SetBuffer(new byte[1024], 0,1024);
+
                 //启动接收,不管有没有,一定得启动.否则有数据来了也不知道.  
                 if (!e.ConnectSocket.ReceiveAsync(receiveEventArgs))
                     ProcessReceive(receiveEventArgs);

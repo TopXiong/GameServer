@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameServer.Core.NetWork;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -8,7 +9,7 @@ namespace GameServer.Core
     {
         public static EventSystem EventSystem => EventSystem.Instance;
 
-        //public 
+        public static ServerService serverService = new ServerService();
 
         public static void Awake()
         {
