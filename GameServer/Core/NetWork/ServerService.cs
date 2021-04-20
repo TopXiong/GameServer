@@ -1,16 +1,32 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Linq;
 using Tools;
 
 namespace GameServer.Core.NetWork
 {
     public class ServerService
     {
+        /// <summary>
+        /// 收到数据后的回调,每个游戏的逻辑处理在这里加上
+        /// </summary>
         public event Action<UserToken,byte[]> ReceiveClientData;
+        /// <summary>
+        /// 监听Socket
+        /// </summary>
         private Socket listenSocket;
-
+        
+        /// <summary>
+        /// 房间ID对应房间
+        /// </summary>
+        private Dictionary<int,BaseRoom> id2rooms = new Dictionary<int,BaseRoom>();
+        /// <summary>
+        /// 玩家ID对应玩家
+        /// </summary>
+        private Dictionary<Guid, UserToken> id2players = new Dictionary<Guid, UserToken>();
         /// <summary>
         /// TODO 改为配置文件读取
         /// </summary>
@@ -20,16 +36,125 @@ namespace GameServer.Core.NetWork
             IPEndPoint iPEndPoint = new IPEndPoint(IPAddress.Any,1234);
             listenSocket.Bind(iPEndPoint);
             listenSocket.Listen(20);
-
-            ReceiveClientData += (UserToken userToken, byte[] bytes) =>
-            {
-                Console.WriteLine("Receive " + Encoding.ASCII.GetString(bytes));
-                SendMessage(userToken, bytes);
-            };
-
+            ReceiveClientData += DataHandle;
             StartAccept(null);
+        }
+
+        #region DataHandleMethod
+
+        private void Msg(UserToken userToken,Msg msg)
+        {
+            msg.context = "Receive: " + msg.context;
+            SendData(userToken, msg);
+        }
+
+        private void CreateRoom(UserToken userToken, CreateRoomC2S createRoom)
+        {
+            int roomId = createRoom.room.Id;
+            if (id2rooms.ContainsKey(roomId))
+            {
+                SendData(userToken, new CreateRoomS2C(false));
+            }
+            id2rooms.Add(roomId, createRoom.room);
+            createRoom.room.PlayerJoin(userToken.Guid);
+            SendData(userToken, new CreateRoomS2C(true));
+        }
+
+        private void JoinRoom(UserToken userToken, JoinRoomC2S joinRoomC2S)
+        {            
+            // Cheak if in room
+            var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.Guid) select linqroom;
+            foreach (var Troom in linqrooms)
+            {
+                Troom.Value.PlayerLeave(userToken.Guid);
+            }
+            //通过Id获取Room
+            BaseRoom room = id2rooms[joinRoomC2S.RoomId];
+            //验证密码
+            if (!room.Password.Equals(joinRoomC2S.Password))
+            {
+                SendData(userToken,new JoinRoomS2C(false));
+                return;
+            }
+            //加入是否成功
+            bool found = room.PlayerJoin(userToken.Guid);
+            if (found)
+            {                
+                foreach (var playerId in room.Players)
+                {
+                    if (userToken.Guid != playerId && playerId != Guid.Empty)
+                    {
+                        //发送玩家加入消息
+                        SendData(id2players[playerId],(new PlayerJoinS2C(userToken.Guid)));
+                    }
+                }
+            }
+            SendData(userToken,new JoinRoomS2C(found));
+        }
+
+        private void GetRoomList(UserToken userToken)
+        {            
+            SendData(userToken, new GetRoomListS2C(id2rooms.Values.ToList()));
+        }
+
+        private void LeaveRoom(UserToken userToken)
+        {
+            Guid currentPlayId = userToken.Guid;
+            //找到含有玩家的房间 
+            var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.Guid) select linqroom;
+
+            foreach(var baseRoom in linqrooms)
+            {
+                baseRoom.Value.PlayerLeave(currentPlayId);
+                foreach (var playerId in baseRoom.Value.Players)
+                {
+                    if (playerId != Guid.Empty)
+                    {
+                        SendData(id2players[playerId], (new PlayerLeaveS2C(userToken.Guid)));
+                    }
+                }
+            }
+           
+            
+        }
+
+        #endregion
 
 
+
+        private void DataHandle(UserToken userToken, byte[] bytes)
+        {
+            var systemNeObject = NetBaseTool.BytesToObject(bytes) as SystemNetObject;
+            if(systemNeObject == null)
+            {
+                return;
+            }
+            Console.WriteLine(systemNeObject);
+            //String 消息——————测试用
+            if (systemNeObject.GetType() == typeof(Msg))
+            {
+                Msg(userToken,systemNeObject as Msg);
+            }
+            // 创建房间
+            else if (systemNeObject.GetType() == typeof(CreateRoomC2S))
+            {
+                CreateRoom(userToken, systemNeObject as CreateRoomC2S);
+            }
+            // 加入房间
+            else if (systemNeObject.GetType() == typeof(JoinRoomC2S))
+            {
+                JoinRoom(userToken,systemNeObject as JoinRoomC2S);
+            }
+            //返回房间列表
+            else if (systemNeObject.GetType() == typeof(GetRoomListC2S))
+            {
+                GetRoomList(userToken);
+            }
+            //离开房间
+            else if (systemNeObject.GetType() == typeof(LeaveRoomC2S))
+            {
+                LeaveRoom(userToken);
+            }
         }
 
         public void StartAccept(SocketAsyncEventArgs acceptEventArg)
@@ -57,11 +182,12 @@ namespace GameServer.Core.NetWork
             SocketAsyncEventArgs acceptArgs = new SocketAsyncEventArgs();
             acceptArgs.Completed += IO_Completed;
             UserToken userToken = new UserToken();
-            userToken.usernamr = "Mtt";
+            userToken.username = "Mtt";
             userToken.Socket = e.AcceptSocket;
             userToken.ConnectTime = DateTime.Now;
             userToken.Remote = e.AcceptSocket.RemoteEndPoint;
             userToken.IPAddress = ((IPEndPoint)(e.AcceptSocket.RemoteEndPoint)).Address;
+            id2players[userToken.Guid] = userToken;
             acceptArgs.UserToken = userToken;
             acceptArgs.SetBuffer(new byte[1024], 0, 1024);
             if (!e.AcceptSocket.ReceiveAsync(acceptArgs))
@@ -156,13 +282,18 @@ namespace GameServer.Core.NetWork
 
         }
 
+        public bool SendData(UserToken token, BaseNetObject baseNetObject)
+        {
+            return SendData(token, NetBaseTool.ObjectToBytes(baseNetObject));
+        }
+
         /// <summary>  
         /// 对数据进行打包,然后再发送  
         /// </summary>  
         /// <param name="token"></param>  
         /// <param name="message"></param>  
         /// <returns></returns>  
-        public bool SendMessage(UserToken token, byte[] message)
+        public bool SendData(UserToken token, byte[] message)
         {
             bool isSuccess = false;
             if (token == null || token.Socket == null || !token.Socket.Connected)

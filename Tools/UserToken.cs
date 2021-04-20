@@ -34,10 +34,17 @@ namespace Tools
         /// 数据缓存区  
         /// </summary>  
         public List<byte> Buffer { get; set; }
-        public string usernamr { get; set; }
+
+        #region Data
+        public string username { get; set; }
+
+        public Guid Guid { get; set; }
+
+        #endregion
 
         public UserToken()
         {
+            this.Guid = Guid.NewGuid();
             this.Buffer = new List<byte>();
         }
     }

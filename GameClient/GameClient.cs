@@ -1,188 +1,181 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-
+using System.Threading.Tasks;
+using Tools;
+using Tools.HauntedHouse;
 namespace GameClient
 {
     public class GameClient
     {
-        private Socket clientSocket;
-        private IPEndPoint hostEndPoint;
+        private EventWaitHandle wait;
         /// <summary>
-        /// 是否连接
+        /// 玩家加入事件
         /// </summary>
-        private bool connected = false;
+        public event Action<Guid> PlayerJoin;
+        /// <summary>
+        /// 玩家离开事件
+        /// </summary>
+        public event Action<Guid> PlayerLeave;
 
-        private AutoResetEvent autoConnectEvent = new AutoResetEvent(false);
-        public event Action<byte[]> ServerDataHandler;
-        public GameClient(String ip, Int32 port)
+        private ClientSocket m_clientSocket;
+
+        private object transmit = null;
+
+        /// <summary>
+        /// 收到数据后的回调
+        /// </summary>
+        private Action<HauntedHouseNetObject> m_action;
+
+
+        /// <summary>
+        /// IP,端口
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        /// <param name="action">收到数据后的回调</param>
+        public GameClient(String ip, Int32 port, Action<HauntedHouseNetObject> action)
         {
-            hostEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            m_buffer = new List<byte>();
+            m_clientSocket = new ClientSocket(ip, port);
+            m_action = action;
+            m_clientSocket.ServerDataHandler += Datahandle;
+            wait = new EventWaitHandle(false, EventResetMode.AutoReset);
         }
 
-        // Calback for connect operation  
-        private void OnConnect(object sender, SocketAsyncEventArgs e)
+        public void Datahandle(byte[] bytes)
         {
-            // Signals the end of connection.  
-            autoConnectEvent.Set(); //释放阻塞.  
-            // Set the flag for socket connected.  
-            SocketError re = e.SocketError;
-            connected = (e.SocketError == SocketError.Success);
-            //如果连接成功,则初始化socketAsyncEventArgs  
-            if (connected)
+            BaseNetObject bno = NetBaseTool.BytesToObject(bytes) as BaseNetObject;
+            if (bno.m_netObjectType == NetObjectType.SystemNetObject)
             {
-                SocketAsyncEventArgs receiveEventArgs = new SocketAsyncEventArgs();
-                //接收参数  
-                receiveEventArgs.Completed += new EventHandler<SocketAsyncEventArgs>(IO_Completed);
-                receiveEventArgs.UserToken = e.UserToken;
-                receiveEventArgs.SetBuffer(new byte[1024], 0,1024);
-                //启动接收,不管有没有,一定得启动.否则有数据来了也不知道.  
-                if (!e.ConnectSocket.ReceiveAsync(receiveEventArgs))
-                    ProcessReceive(receiveEventArgs);
-            }
-        }
-
-        void IO_Completed(object sender, SocketAsyncEventArgs e)
-        {
-            SocketAsyncEventArgs mys = e;
-            // determine which type of operation just completed and call the associated handler  
-            switch (e.LastOperation)
-            {
-                case SocketAsyncOperation.Receive:
-                    ProcessReceive(e);
-                    break;
-                case SocketAsyncOperation.Send:
-                    ProcessSend(e);
-                    break;
-                default:
-                    throw new ArgumentException("The last operation completed on the socket was not a receive or send");
-            }
-        }
-
-        public SocketError Connent()
-        {
-            SocketAsyncEventArgs connectArgs = new SocketAsyncEventArgs();
-            connectArgs.UserToken = clientSocket;
-            connectArgs.RemoteEndPoint = hostEndPoint;
-            connectArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnConnect);
-
-            clientSocket.ConnectAsync(connectArgs);
-            autoConnectEvent.WaitOne(); //阻塞. 让程序在这里等待,直到连接响应后再返回连接结果  
-
-            SocketError re = connectArgs.SocketError;
-
-            return re;
-        }
-
-        private void ProcessSend(SocketAsyncEventArgs e)
-        {
-            if (e.SocketError != SocketError.Success)
-            {
-                //ProcessError(e);
-            }
-        }
-        //定义接收数据的对象  
-        List<byte> m_buffer = new List<byte>();
-
-        private void ProcessReceive(SocketAsyncEventArgs e)
-        {
-            try
-            {
-                // check if the remote host closed the connection  
-                Socket token = (Socket)e.UserToken;
-                if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
+                SystemNetObject systemNetObject = bno as SystemNetObject;
+                if(systemNetObject.GetType() == typeof(Msg))
                 {
-                    //读取数据  
-                    byte[] data = new byte[e.BytesTransferred];
-                    Array.Copy(e.Buffer, e.Offset, data, 0, e.BytesTransferred);
-                    lock (m_buffer)
-                    {
-                        m_buffer.AddRange(data);
-                    }
-
-                    do
-                    {
-                        //一个完整的包是包长(4字节)+包数据,  
-                        //判断包的长度,前面4个字节.  
-                        byte[] lenBytes = m_buffer.GetRange(0, 4).ToArray();
-                        int packageLen = BitConverter.ToInt32(lenBytes, 0);
-                        if (packageLen <= m_buffer.Count - 4)
-                        {
-                            //包够长时,则提取出来,交给后面的程序去处理  
-                            byte[] rev = m_buffer.GetRange(4, packageLen).ToArray();
-                            //从数据池中移除这组数据,为什么要lock,你懂的  
-                            lock (m_buffer)
-                            {
-                                m_buffer.RemoveRange(0, packageLen + 4);
-                            }
-                            //将数据包交给前台去处理  
-                            ServerDataHandler?.Invoke(rev);
-                        }
-                        else
-                        {   //长度不够,还得继续接收,需要跳出循环  
-                            break;
-                        }
-                    } while (m_buffer.Count > 4);
-
-                    if (!token.ReceiveAsync(e))
-                        this.ProcessReceive(e);
+                    Console.WriteLine(systemNetObject);
                 }
-                else
+                else if (systemNetObject.GetType() == typeof(CreateRoomS2C))
                 {
-                    //ProcessError(e); ///服务器断开
+                    transmit = (systemNetObject as CreateRoomS2C).Success;
+                    wait.Set();
                 }
-            }
-            catch (Exception xe)
-            {
-                Console.WriteLine(xe.Message);
-            }
-        }
-
-        // Exchange a message with the host.  
-        internal void Send(byte[] sendBuffer)
-        {
-            if (connected)
-            {
-                //先对数据进行包装,就是把包的大小作为头加入
-                byte[] buff = new byte[sendBuffer.Length + 4];
-                Array.Copy(BitConverter.GetBytes(sendBuffer.Length), buff, 4);
-                Array.Copy(sendBuffer, 0, buff, 4, sendBuffer.Length);
-                //查找有没有空闲的发送MySocketEventArgs
-                SocketAsyncEventArgs sendArg = new SocketAsyncEventArgs();
-                sendArg.Completed += new EventHandler<SocketAsyncEventArgs>(IO_Completed);
-                sendArg.UserToken = clientSocket;
-                sendArg.SetBuffer(buff, 0, buff.Length);
-                clientSocket.SendAsync(sendArg);
+                else if (systemNetObject.GetType() == typeof(JoinRoomS2C))
+                {
+                    transmit = (systemNetObject as JoinRoomS2C).Success;
+                    wait.Set();
+                }
+                else if (systemNetObject.GetType() == typeof(GetRoomListS2C))
+                {
+                    transmit = (systemNetObject as GetRoomListS2C).rooms;
+                    wait.Set();
+                }
+                else if (systemNetObject.GetType() == typeof(PlayerJoinS2C))
+                {
+                    PlayerJoin?.Invoke((systemNetObject as PlayerJoinS2C).playerId);
+                }
+                else if (systemNetObject.GetType() == typeof(PlayerLeaveS2C))
+                {
+                    PlayerLeave?.Invoke((systemNetObject as PlayerLeaveS2C).playerId);
+                }
             }
             else
             {
-                throw new SocketException((Int32)SocketError.NotConnected);
+                HauntedHouseNetObject hauntedHouseNetObject = bno as HauntedHouseNetObject;
+                if (hauntedHouseNetObject == null)
+                {
+                    throw new ArgumentException(bno.m_netObjectType + " Can't Used");
+                }
+                m_action(hauntedHouseNetObject);
             }
         }
 
-        static void Main(string[] args)
+        /// <summary>
+        /// 连接服务器
+        /// </summary>
+        /// <returns>SocketError.Success标识成功</returns>
+        public SocketError Connent()
         {
-            GameClient gameClient = new GameClient("127.0.0.1", 1234);
-            var socketError = gameClient.Connent();
-            gameClient.ServerDataHandler += (byte[] bytes) =>
-            {
-                Console.WriteLine(Encoding.ASCII.GetString(bytes));
-            };
-            while (true)
-            {
-                Console.WriteLine("Input Message");
-                string s = Console.ReadLine();
-                gameClient.Send(Encoding.ASCII.GetBytes(s));
-            }
-
-            Console.WriteLine(socketError);
-            Console.ReadLine();
+            return m_clientSocket.Connent();
         }
+
+        /// <summary>
+        /// 构建一个HauntedHouseNetObject对象并发送,HauntedHouseNetObject类型放在Tools/Games/HauntedHouse下
+        /// </summary>
+        /// <param name="hauntedHouseNetObject"></param>
+        public void Send(HauntedHouseNetObject hauntedHouseNetObject)
+        {
+            Send(hauntedHouseNetObject);
+        }
+
+        private void Send(BaseNetObject baseNetObject)
+        {
+            m_clientSocket.Send(NetBaseTool.ObjectToBytes(baseNetObject));
+        }
+
+        #region SystemNetObject
+        
+
+
+        /// <summary>
+        /// Debug 用发送消息
+        /// </summary>
+        /// <param name="s"></param>
+        public void SendMsg(string s)
+        {
+            Send(new Msg(s));
+        }
+
+        /// <summary>
+        /// 离开房间
+        /// </summary>
+        /// <returns>返回带ID号的房间</returns>
+        public void LeaveRoom()
+        {
+            Send(new LeaveRoomC2S());
+        }
+
+        /// <summary>
+        /// 获取房间List
+        /// </summary>
+        /// <returns>房间List</returns>
+        public List<BaseRoom> GetRoomList()
+        {
+            Send(new GetRoomListC2S());
+            wait.WaitOne();
+            return (List<BaseRoom>)transmit;
+        }
+
+        /// <summary>
+        /// 创建房间，交给服务器查询房间号是否重复
+        /// </summary>
+        /// <param name="room">房间号及其配置</param>
+        /// <returns>是否创建成功</returns>
+        public bool CreateRoom(BaseRoom room)
+        {
+            CreateRoomC2S createRoom = new CreateRoomC2S(room);
+            Console.WriteLine("Reade to Send createRoom");
+            Send(createRoom);
+            Console.WriteLine("Send createRoom");
+            wait.WaitOne();
+            Console.WriteLine("Recevice createRoom");
+            return ((bool)transmit);
+        }
+
+        /// <summary>
+        /// 加入房间
+        /// </summary>
+        /// <param name="room">房间号</param>
+        /// <returns>返回带ID号的房间</returns>
+        public bool JoinRoom(int roomID, string password = "")
+        {
+            JoinRoomC2S joinRoom = new JoinRoomC2S(roomID, password);
+            Send(joinRoom);
+            wait.WaitOne();
+            return (bool)transmit;
+        }
+
+        #endregion
 
     }
 }

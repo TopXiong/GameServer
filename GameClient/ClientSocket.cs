@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace GameClient
 {
-    public class GameClient
+    internal class ClientSocket
     {
         private Socket clientSocket;
         private IPEndPoint hostEndPoint;
@@ -17,8 +17,8 @@ namespace GameClient
         private bool connected = false;
 
         private AutoResetEvent autoConnectEvent = new AutoResetEvent(false);
-        public event Action<byte[]> ServerDataHandler;
-        public GameClient(String ip, Int32 port)
+        internal event Action<byte[]> ServerDataHandler;
+        internal ClientSocket(String ip, Int32 port)
         {
             hostEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -40,7 +40,7 @@ namespace GameClient
                 //接收参数  
                 receiveEventArgs.Completed += new EventHandler<SocketAsyncEventArgs>(IO_Completed);
                 receiveEventArgs.UserToken = e.UserToken;
-
+                receiveEventArgs.SetBuffer(new byte[1024], 0,1024);
                 //启动接收,不管有没有,一定得启动.否则有数据来了也不知道.  
                 if (!e.ConnectSocket.ReceiveAsync(receiveEventArgs))
                     ProcessReceive(receiveEventArgs);
@@ -64,7 +64,7 @@ namespace GameClient
             }
         }
 
-        public SocketError Connent()
+        internal SocketError Connent()
         {
             SocketAsyncEventArgs connectArgs = new SocketAsyncEventArgs();
             connectArgs.UserToken = clientSocket;
@@ -165,24 +165,7 @@ namespace GameClient
             }
         }
 
-        static void Main(string[] args)
-        {
-            GameClient gameClient = new GameClient("127.0.0.1", 1234);
-            var socketError = gameClient.Connent();
-            gameClient.ServerDataHandler += (byte[] bytes) =>
-            {
-                Console.WriteLine(Encoding.ASCII.GetString(bytes));
-            };
-            while (true)
-            {
-                Console.WriteLine("Input Message");
-                string s = Console.ReadLine();
-                gameClient.Send(Encoding.ASCII.GetBytes(s));
-            }
-
-            Console.WriteLine(socketError);
-            Console.ReadLine();
-        }
+        
 
     }
 }
