@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tools
+namespace TF.Tools
 {
     [Serializable]
     public enum NetObjectType

@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Tools
+namespace TF.Tools
 {
     public static class NetBaseTool
     {
@@ -24,24 +24,27 @@ namespace Tools
         /// </summary> 
         /// <param name="obj">能序列化的对象</param>         
         /// <returns></returns> 
-        public static byte[] ObjectToBytes(object obj)
+        public static byte[] ObjectToBytes(BaseNetObject obj)
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                IFormatter formatter = new BinaryFormatter(); formatter.Serialize(ms, obj); return ms.GetBuffer();
+                IFormatter formatter = new BinaryFormatter(); formatter.Serialize(ms, obj);
+                return ms.GetBuffer();
             }
         }
 
         /// <summary> 
         /// 将一个序列化后的byte[]数组还原         
         /// </summary>
-        /// <param name="Bytes"></param>         
+        /// <param name="bytes"></param>         
         /// <returns></returns> 
-        public static object BytesToObject(byte[] Bytes)
+        public static object BytesToObject(byte[] bytes)
         {
-            using (MemoryStream ms = new MemoryStream(Bytes))
+            Console.WriteLine(bytes.Length);
+            using (MemoryStream ms = new MemoryStream(bytes))
             {
-                IFormatter formatter = new BinaryFormatter(); return formatter.Deserialize(ms);
+                IFormatter formatter = new BinaryFormatter();
+                return formatter.Deserialize(ms);
             }
         }
 

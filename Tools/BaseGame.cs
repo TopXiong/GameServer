@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tools
-{
+
+
     //public abstract class BaseGame
     //{
     //    [Serializable]
@@ -33,4 +33,4 @@ namespace Tools
         
 
     //}
-}
+

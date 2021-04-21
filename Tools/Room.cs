@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tools
+namespace TF.Tools
 {
     [Serializable]
     public abstract class BaseRoom
@@ -11,7 +11,7 @@ namespace Tools
         protected int m_maxPlayerNum;
         //房间Id号
         protected int m_id;
-        ////玩家
+        //玩家
         protected Guid[] m_playersID;
         //房间密码
         protected string m_password;
@@ -50,7 +50,7 @@ namespace Tools
         /// <param name="gameNetObject"></param>
         public abstract void DataHandle(Guid userToken,GameNetObject gameNetObject);
 
-        public Action<Guid,GameNetObject> Send;
+        public static Action<Guid,GameNetObject> Send;
 
         /// <summary>
         /// 对房间所有的玩家发送消息

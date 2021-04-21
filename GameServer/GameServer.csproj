@@ -64,6 +64,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HauntedHouse\HauntedHouse.csproj">
+      <Project>{bb31d8eb-b1f8-4dbd-985a-9e48d581db44}</Project>
+      <Name>HauntedHouse</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tools\Tools.csproj">
       <Project>{0009e6c7-ccd1-45df-b728-138de059eac1}</Project>
       <Name>Tools</Name>

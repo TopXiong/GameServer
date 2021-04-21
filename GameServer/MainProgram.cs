@@ -8,8 +8,9 @@ using System.Threading;
 using GameServer.Core;
 using GameServer.Core.NetWork;
 using GameServer.Core.Tools;
-using GameServer.Log;
+using GameServer;
 using Lister13;
+using TF.Log;
 
 namespace GameServer
 {
@@ -19,9 +20,6 @@ namespace GameServer
         static void Main(string[] args)
         {
             Game.EventSystem.LoadAssembly(typeof(Game).Assembly);
-            var assembly = Assembly.LoadFile(
-                @"C:\Users\xiongshangfeng\source\repos\GameProject_A\SourceCodes\GameServer-master\HauntedHouse\bin\Debug\HauntedHouse.dll"); 
-            Game.EventSystem.LoadAssembly(assembly);
             Game.Awake();
             Game.Start();
             while (true)

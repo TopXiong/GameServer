@@ -6,7 +6,7 @@ using GameServer.Core.Attribute;
 using GameServer.Core.Base;
 using GameServer.Core.Interface;
 using GameServer.Core.Tools;
-using GameServer.Log;
+using GameServer;
 
 namespace GameServer.Core
 {

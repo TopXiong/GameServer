@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HauntedHouse;
-using Tools;
-using Tools.HauntedHouse;
+using TF.Tools;
+using TF.Tools.HauntedHouse;
 
-namespace GameClient
+namespace TF.GameClient
 {
     class MainProgram
     {
         static void Main(string[] args)
         {
+
             GameClient gameClient = new GameClient("127.0.0.1", 1234, Handle);
             var socketError = gameClient.Connent();
-            gameClient.PlayerJoin +=  (id)=> { Console.WriteLine("Player: " + id + " Join"); };
+            gameClient.PlayerJoin += (id) => { Console.WriteLine("Player: " + id + " Join"); };
             gameClient.PlayerLeave += (id) => { Console.WriteLine("Player: " + id + " Leave"); };
             while (true)
             {
@@ -54,12 +56,9 @@ namespace GameClient
                         case "LeaveRoom":
                             gameClient.LeaveRoom();
                             break;
-                        case "Transform":
-                            gameClient.Send(new TransformChange());
-                            break;
                         default:
                             Console.WriteLine("Error Command");
-                            break;                            
+                            break;
                     }
                     Console.WriteLine("-----------");
                     Console.WriteLine("-----------");

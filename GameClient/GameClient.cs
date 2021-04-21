@@ -6,9 +6,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using HauntedHouse;
-using Tools;
-using Tools.HauntedHouse;
-namespace GameClient
+using TF.Tools;
+
+
+namespace TF.GameClient
 {
     public class GameClient
     {
@@ -106,7 +107,7 @@ namespace GameClient
         /// <param name="hauntedHouseNetObject"></param>
         public void Send(HauntedHouseNetObject hauntedHouseNetObject)
         {
-            Send(hauntedHouseNetObject);
+            Send(hauntedHouseNetObject as BaseNetObject);
         }
 
         private void Send(BaseNetObject baseNetObject)

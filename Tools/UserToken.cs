@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tools
+namespace TF.Tools
 {
     public class UserToken
     {

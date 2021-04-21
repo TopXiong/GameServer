@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Tools;
+using TF.Tools;
 
-namespace Tools.HauntedHouse
+namespace TF.Tools.HauntedHouse
 {
     [Serializable]
+    [ProtoBuf.ProtoContract]
     public class HauntedHouseRoom : BaseRoom
     {
         protected HauntedHouseRoom()
@@ -22,6 +23,8 @@ namespace Tools.HauntedHouse
         {
             var list = new List<Guid>();
             list.Add(userToken);
+            Console.WriteLine(gameNetObject);
+            SendDataToRoomPlayer(gameNetObject, list);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Linq;
-using Tools;
+using TF.Tools;
 
 namespace GameServer.Core.NetWork
 {
@@ -37,6 +37,8 @@ namespace GameServer.Core.NetWork
             listenSocket.Bind(iPEndPoint);
             listenSocket.Listen(20);
             ReceiveClientData += DataHandle;
+            //绑定房间的send方法
+            BaseRoom.Send += (id, gameNetObject) => { SendData(id2players[id], gameNetObject); };
             StartAccept(null);
         }
 
@@ -44,7 +46,7 @@ namespace GameServer.Core.NetWork
 
         private void Msg(UserToken userToken,Msg msg)
         {
-            msg.context = "Receive: " + msg.context;
+            msg.Context = "Receive: " + msg.Context;
             SendData(userToken, msg);
         }
 

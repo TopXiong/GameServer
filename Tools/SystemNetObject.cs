@@ -1,28 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tools
+namespace TF.Tools
 {
+
 
     [Serializable]
     public class Msg : SystemNetObject
     {
+        public string Context;
 
-        public string context;
+        public Msg() { }
 
         public Msg(string context)
         {
-            this.context = context;
+            this.Context = context;
         }
 
         public override string ToString()
         {
-            return context;
+            return Context;
         }
     }
+
     [Serializable]
     public class HeartBeat : SystemNetObject
     {
@@ -31,18 +35,25 @@ namespace Tools
     [Serializable]
     public class CreateRoomC2S : SystemNetObject
     {
+
         public BaseRoom room;
+
         public GameType gameType;
+
+        public CreateRoomC2S() { }
 
         public CreateRoomC2S(BaseRoom room)
         {
             this.room = room;
         }
     }
+
     [Serializable]
     public class CreateRoomS2C : SystemNetObject
     {
         public bool Success;
+
+        public CreateRoomS2C() { }
 
         public CreateRoomS2C(bool success)
         {
@@ -53,7 +64,9 @@ namespace Tools
     [Serializable]
     public class JoinRoomC2S : SystemNetObject
     {
+
         public int RoomId;
+
         public string Password;
 
         public JoinRoomC2S(int roomId, string password)
@@ -62,6 +75,7 @@ namespace Tools
             this.Password = password;
         }
     }
+
     [Serializable]
     public class JoinRoomS2C : SystemNetObject
     {
@@ -72,16 +86,19 @@ namespace Tools
             this.Success = success;
         }
     }
+
     [Serializable]
     public class LeaveRoomC2S : SystemNetObject
     {
 
     }
+
     [Serializable]
     public class GetRoomListC2S : SystemNetObject
     {
 
     }
+
     [Serializable]
     public class GetRoomListS2C : SystemNetObject
     {
@@ -95,6 +112,7 @@ namespace Tools
     [Serializable]
     public class PlayerJoinS2C : SystemNetObject
     {
+
         public Guid playerId;
 
         public PlayerJoinS2C(Guid playerId)
@@ -102,9 +120,11 @@ namespace Tools
             this.playerId = playerId;
         }
     }
+
     [Serializable]
     public class PlayerLeaveS2C : SystemNetObject
     {
+
         public Guid playerId;
 
         public PlayerLeaveS2C(Guid playerId)
