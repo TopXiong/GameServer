@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HauntedHouse;
 using Tools;
 using Tools.HauntedHouse;
 namespace GameClient

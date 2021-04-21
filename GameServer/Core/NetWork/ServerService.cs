@@ -18,7 +18,7 @@ namespace GameServer.Core.NetWork
         /// 监听Socket
         /// </summary>
         private Socket listenSocket;
-        
+
         /// <summary>
         /// 房间ID对应房间
         /// </summary>
@@ -122,10 +122,25 @@ namespace GameServer.Core.NetWork
 
 
 
+
+        #region 网络相关
         private void DataHandle(UserToken userToken, byte[] bytes)
         {
-            var systemNeObject = NetBaseTool.BytesToObject(bytes) as SystemNetObject;
-            if(systemNeObject == null)
+            var baseNetObject = NetBaseTool.BytesToObject(bytes) as BaseNetObject;
+            if(baseNetObject == null) return;
+            //如果是游戏数据,就交给游戏房间处理
+            if (baseNetObject is GameNetObject)
+            {
+                var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.Guid) select linqroom;
+                if (linqrooms.Count() > 0)
+                {
+                    linqrooms.First().Value.DataHandle(userToken.Guid, baseNetObject as GameNetObject);
+                }
+                return;
+            }
+            //系统数据就地处理
+            var systemNeObject = baseNetObject as SystemNetObject;
+            if (systemNeObject == null)
             {
                 return;
             }
@@ -282,6 +297,41 @@ namespace GameServer.Core.NetWork
 
         }
 
+        #endregion
+
+        /// <summary>
+        /// 对房间所有的玩家发送消息
+        /// </summary>
+        /// <param name="room"></param>
+        /// <param name="baseNetObject"></param>
+        public void SendDataToRoomAllPlayer(BaseRoom room,BaseNetObject baseNetObject)
+        {
+            SendDataToRoomPlayer(room, baseNetObject,new List<Guid>());
+        }
+
+        /// <summary>
+        /// 对房间所有的玩家发送消息
+        /// </summary>
+        /// <param name="room"></param>
+        /// <param name="baseNetObject"></param>
+        public void SendDataToRoomPlayer(BaseRoom room, BaseNetObject baseNetObject,List<Guid> notSends)
+        {
+            foreach (var playerId in room.Players)
+            {
+                if (!notSends.Contains(playerId) && playerId != Guid.Empty)
+                {
+                    //发送玩家加入消息
+                    SendData(id2players[playerId], baseNetObject);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 对token发送baseNetObject
+        /// </summary>
+        /// <param name="token">用户</param>
+        /// <param name="baseNetObject">消息</param>
+        /// <returns></returns>
         public bool SendData(UserToken token, BaseNetObject baseNetObject)
         {
             return SendData(token, NetBaseTool.ObjectToBytes(baseNetObject));

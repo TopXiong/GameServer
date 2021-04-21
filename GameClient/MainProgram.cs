@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HauntedHouse;
 using Tools;
 using Tools.HauntedHouse;
 
@@ -53,6 +54,9 @@ namespace GameClient
                         case "LeaveRoom":
                             gameClient.LeaveRoom();
                             break;
+                        case "Transform":
+                            gameClient.Send(new TransformChange());
+                            break;
                         default:
                             Console.WriteLine("Error Command");
                             break;                            
@@ -66,7 +70,7 @@ namespace GameClient
         }
         static void Handle(HauntedHouseNetObject hauntedHouseNetObject)
         {
-
+            Console.WriteLine(hauntedHouseNetObject);
         }
     }
 }

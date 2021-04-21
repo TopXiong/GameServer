@@ -49,8 +49,6 @@
     <Compile Include="BaseGame.cs" />
     <Compile Include="BaseNetObject.cs" />
     <Compile Include="Games\DirtyPig\DirtyPigRoom.cs" />
-    <Compile Include="Games\HauntedHouse\HauntedHouseRoom.cs" />
-    <Compile Include="Games\HauntedHouse\HauntedHouseNetObject.cs" />
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Log\LogType.cs" />
     <Compile Include="NetBaseTool.cs" />
