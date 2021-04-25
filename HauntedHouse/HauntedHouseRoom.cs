@@ -15,5 +15,12 @@ namespace TF.Tools.HauntedHouse
         {
             this.m_id = id;
         }
+
+        public override void DataHandle(Guid userToken, GameNetObject gameNetObject)
+        {
+            base.DataHandle(userToken, gameNetObject);
+        }
+
+
     }
 }
