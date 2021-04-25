@@ -48,7 +48,13 @@ namespace TF.Tools
         /// </summary>
         /// <param name="userToken"></param>
         /// <param name="gameNetObject"></param>
-        public abstract void DataHandle(Guid userToken,GameNetObject gameNetObject);
+        public virtual void DataHandle(Guid userToken, GameNetObject gameNetObject)
+        {
+            var list = new List<Guid>();
+            list.Add(userToken);
+            Console.WriteLine(gameNetObject);
+            SendDataToRoomPlayer(gameNetObject, list);
+        }
 
         public static Action<Guid,GameNetObject> Send;
 

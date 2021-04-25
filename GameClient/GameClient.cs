@@ -4,15 +4,17 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using HauntedHouse;
 using TF.Tools;
 
+using Timer = System.Timers.Timer;
 
 namespace TF.GameClient
 {
     public class GameClient
     {
+
+        private const float WaitTime = 5f;
+        //private Timer waitTimer;
         private EventWaitHandle wait;
         /// <summary>
         /// 玩家加入事件
@@ -44,6 +46,13 @@ namespace TF.GameClient
             m_clientSocket = new ClientSocket(ip, port);
             m_action = action;
             m_clientSocket.ServerDataHandler += Datahandle;
+            //waitTimer = new Timer();
+            //waitTimer.Interval = WaitTime;
+            //waitTimer.Elapsed += (o, e) =>
+            //{
+            //    wait.Set();
+            //    waitTimer.Stop();
+            //};
             wait = new EventWaitHandle(false, EventResetMode.AutoReset);
         }
 
@@ -144,6 +153,7 @@ namespace TF.GameClient
         public List<BaseRoom> GetRoomList()
         {
             Send(new GetRoomListC2S());
+            //waitTimer.Start();
             wait.WaitOne();
             return (List<BaseRoom>)transmit;
         }
@@ -156,11 +166,9 @@ namespace TF.GameClient
         public bool CreateRoom(BaseRoom room)
         {
             CreateRoomC2S createRoom = new CreateRoomC2S(room);
-            Console.WriteLine("Reade to Send createRoom");
             Send(createRoom);
-            Console.WriteLine("Send createRoom");
+            //waitTimer.Start();
             wait.WaitOne();
-            Console.WriteLine("Recevice createRoom");
             return ((bool)transmit);
         }
 
@@ -173,6 +181,7 @@ namespace TF.GameClient
         {
             JoinRoomC2S joinRoom = new JoinRoomC2S(roomID, password);
             Send(joinRoom);
+            //waitTimer.Start();
             wait.WaitOne();
             return (bool)transmit;
         }

@@ -44,4 +44,14 @@ namespace TF.Tools
             m_netObjectType = NetObjectType.GameNetObject;
         }
     }
+
+    [Serializable]
+    public class HauntedHouseNetObject : GameNetObject
+    {
+        public HauntedHouseNetObject()
+        {
+            gameType = GameType.HauntedHouse;
+        }
+    }
+
 }

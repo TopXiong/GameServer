@@ -9,14 +9,6 @@ using UnityEngine;
 
 namespace HauntedHouse
 {
-    [Serializable]
-    public class HauntedHouseNetObject:GameNetObject
-    {
-        public HauntedHouseNetObject()
-        {
-            gameType = GameType.HauntedHouse;
-        }
-    }
 
     [Serializable]
     public class PositionChange : HauntedHouseNetObject
@@ -25,7 +17,6 @@ namespace HauntedHouse
 
         public PositionChange(Vector3 position)
         {
-
             x = position.x;
             y = position.y;
             z = position.z;
