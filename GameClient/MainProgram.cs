@@ -33,14 +33,14 @@ namespace TF.GameClient
                         case "CreateRoom":
                             Console.Write("Input ID : ");
                             HauntedHouseRoom dpr = new HauntedHouseRoom(int.Parse(Console.ReadLine()));
-                            bool bb = gameClient.CreateRoom(dpr);
+                            var bb = gameClient.CreateRoom(dpr);
                             Console.WriteLine("CreateRoom Success? " + bb);
                             Console.WriteLine("Success " + bb + "RoomId : " + dpr.Id);
                             break;
                         case "JoinRoom":
                             Console.WriteLine("input RoomId");
                             int id = int.Parse(Console.ReadLine());
-                            bool b = gameClient.JoinRoom(id);
+                            var b = gameClient.JoinRoom(id);
                             Console.WriteLine("JoinRoom " + b);
                             break;
                         case "GetRoomList":

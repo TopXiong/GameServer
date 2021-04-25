@@ -101,29 +101,39 @@ namespace TF.Tools
             }
         }
 
-        public virtual bool ContainsPlayer(Guid player)
+        /// <summary>
+        /// 返回玩家在房间中的ID
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        public virtual int ContainsPlayer(Guid player)
         {
             for (int i = 0; i < Players.Length; i++)
             {
                 if (Players[i] == player)
                 {
-                    return true;
+                    return i;
                 }
             }
-            return false;
+            return -1;
         }
 
-        public virtual bool PlayerJoin(Guid player)
+        /// <summary>
+        /// 返回玩家在房间中的ID
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        public virtual int PlayerJoin(Guid player)
         {
             for (int i = 0; i < Players.Length; i++)
             {
                 if (Players[i] == Guid.Empty)
                 {
                     Players[i] = player;
-                    return true;
+                    return i;
                 }
             }
-            return false;
+            return -1;
         }
 
         public override string ToString()

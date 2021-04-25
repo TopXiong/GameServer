@@ -51,13 +51,16 @@ namespace TF.Tools
     [Serializable]
     public class CreateRoomS2C : SystemNetObject
     {
-        public bool Success;
+        /// <summary>
+        /// 在房间中的序号,-1表示不成功
+        /// </summary>
+        public int PlayerId;
 
         public CreateRoomS2C() { }
 
-        public CreateRoomS2C(bool success)
+        public CreateRoomS2C(int playerId)
         {
-            this.Success = success;
+            this.PlayerId = playerId;
         }
     }
 
@@ -79,11 +82,11 @@ namespace TF.Tools
     [Serializable]
     public class JoinRoomS2C : SystemNetObject
     {
-        public bool Success;
+        public int PlayerId;
 
-        public JoinRoomS2C(bool success)
+        public JoinRoomS2C(int playerId)
         {
-            this.Success = success;
+            this.PlayerId = playerId;
         }
     }
 

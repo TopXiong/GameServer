@@ -34,6 +34,7 @@ namespace TF.GameClient
         /// </summary>
         private Action<HauntedHouseNetObject> m_action;
 
+        public Guid MyID { get; private set; }
 
         /// <summary>
         /// IP,端口
@@ -68,12 +69,12 @@ namespace TF.GameClient
                 }
                 else if (systemNetObject.GetType() == typeof(CreateRoomS2C))
                 {
-                    transmit = (systemNetObject as CreateRoomS2C).Success;
+                    transmit = (systemNetObject as CreateRoomS2C).PlayerId;
                     wait.Set();
                 }
                 else if (systemNetObject.GetType() == typeof(JoinRoomS2C))
                 {
-                    transmit = (systemNetObject as JoinRoomS2C).Success;
+                    transmit = (systemNetObject as JoinRoomS2C).PlayerId;
                     wait.Set();
                 }
                 else if (systemNetObject.GetType() == typeof(GetRoomListS2C))
@@ -140,7 +141,7 @@ namespace TF.GameClient
         /// <summary>
         /// 离开房间
         /// </summary>
-        /// <returns>返回带ID号的房间</returns>
+        /// <returns></returns>
         public void LeaveRoom()
         {
             Send(new LeaveRoomC2S());
@@ -162,28 +163,28 @@ namespace TF.GameClient
         /// 创建房间，交给服务器查询房间号是否重复
         /// </summary>
         /// <param name="room">房间号及其配置</param>
-        /// <returns>是否创建成功</returns>
-        public bool CreateRoom(BaseRoom room)
+        /// <returns>在房间中的id,-1为不成功</returns>
+        public int CreateRoom(BaseRoom room)
         {
             CreateRoomC2S createRoom = new CreateRoomC2S(room);
             Send(createRoom);
             //waitTimer.Start();
             wait.WaitOne();
-            return ((bool)transmit);
+            return (int)transmit;
         }
 
         /// <summary>
         /// 加入房间
         /// </summary>
         /// <param name="room">房间号</param>
-        /// <returns>返回带ID号的房间</returns>
-        public bool JoinRoom(int roomID, string password = "")
+        /// <returns>在房间中的id,-1为不成功</returns>
+        public int JoinRoom(int roomID, string password = "")
         {
             JoinRoomC2S joinRoom = new JoinRoomC2S(roomID, password);
             Send(joinRoom);
             //waitTimer.Start();
             wait.WaitOne();
-            return (bool)transmit;
+            return (int)transmit;
         }
 
         #endregion
