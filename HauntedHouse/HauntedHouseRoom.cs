@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using TF.Tools;
 
 namespace TF.Tools.HauntedHouse
 {
