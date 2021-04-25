@@ -76,6 +76,16 @@ namespace TF.Tools
         }
 
         /// <summary>
+        /// 给房主发消息
+        /// </summary>
+        /// <param name="gameNetObject"></param>
+        /// <param name="notSends"></param>
+        public void SendDataToRoomOwner(GameNetObject gameNetObject)
+        {
+            Send(Players[RoomOwnerIndex], gameNetObject);
+        }
+
+        /// <summary>
         /// 对房间所有的玩家发送消息
         /// </summary>
         /// <param name="room"></param>
