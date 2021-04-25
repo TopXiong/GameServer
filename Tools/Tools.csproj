@@ -65,8 +65,8 @@
     <Compile Include="BaseGame.cs" />
     <Compile Include="BaseNetObject.cs" />
     <Compile Include="Games\DirtyPig\DirtyPigRoom.cs" />
-    <Compile Include="Log\Logger.cs" />
-    <Compile Include="Log\LogType.cs" />
+    <Compile Include="MyLogger\Logger.cs" />
+    <Compile Include="MyLogger\LogType.cs" />
     <Compile Include="NetBaseTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Room.cs" />
