@@ -39,18 +39,23 @@ namespace TF.Tools
     public abstract class GameNetObject : BaseNetObject
     {
         public GameType gameType;
-        public GameNetObject()
+
+        public int netObjectId;
+
+        public GameNetObject(int id)
         {
             m_netObjectType = NetObjectType.GameNetObject;
+            netObjectId = id;
         }
     }
 
     [Serializable]
     public class HauntedHouseNetObject : GameNetObject
     {
-        public HauntedHouseNetObject()
+        public HauntedHouseNetObject(int id) : base(id)
         {
             gameType = GameType.HauntedHouse;
+            netObjectId = id;
         }
     }
 
