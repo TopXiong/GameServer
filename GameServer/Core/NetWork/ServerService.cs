@@ -56,6 +56,7 @@ namespace GameServer.Core.NetWork
             if (id2rooms.ContainsKey(roomId))
             {
                 SendData(userToken, new CreateRoomS2C(false));
+                return;
             }
             id2rooms.Add(roomId, createRoom.room);
             createRoom.room.PlayerJoin(userToken.Guid);
