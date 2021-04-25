@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Linq;
 using TF.Tools;
+using TF.Log;
 
 namespace GameServer.Core.NetWork
 {
@@ -71,6 +72,12 @@ namespace GameServer.Core.NetWork
             {
                 Troom.Value.PlayerLeave(userToken.Guid);
             }
+            //房间不存在
+            if (!id2rooms.ContainsKey(joinRoomC2S.RoomId))
+            {
+                SendData(userToken, new JoinRoomS2C(false));
+                return;
+            }
             //通过Id获取Room
             BaseRoom room = id2rooms[joinRoomC2S.RoomId];
             //验证密码
@@ -92,6 +99,7 @@ namespace GameServer.Core.NetWork
                     }
                 }
             }
+            Console.WriteLine("Join " + found);
             SendData(userToken,new JoinRoomS2C(found));
         }
 
