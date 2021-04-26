@@ -5,6 +5,13 @@ using System.Text;
 namespace TF.Tools
 {
     [Serializable]
+    public class PlayerState
+    {
+        public Vector3 Position { get; set; }
+
+    }
+
+    [Serializable]
     public abstract class BaseRoom
     {
         //最大容纳人数
@@ -17,6 +24,17 @@ namespace TF.Tools
         protected string m_password;
         //房主
         protected int m_roomOwner;
+
+        /// <summary>
+        /// 玩家字典
+        /// </summary>
+        protected Dictionary<int, PlayerState> m_playerDic = new Dictionary<int, PlayerState>();
+
+        public Dictionary<int, PlayerState> PlayerDic
+        {
+            get => m_playerDic;
+        }
+
         protected BaseRoom(int maxPlayerNum, string password)
         {
             m_playersID = new Guid[maxPlayerNum];
