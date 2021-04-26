@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using HauntedHouse;
+using TF.Tools;
 
-namespace TF.Tools.HauntedHouse
+namespace HauntedHouse
 {
     [Serializable]
     public class HauntedHousePlayerState : PlayerState

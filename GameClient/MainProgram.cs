@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HauntedHouse;
 using TF.Tools;
-using TF.Tools.HauntedHouse;
 
 namespace TF.GameClient
 {
