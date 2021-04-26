@@ -7,8 +7,6 @@ namespace TF.Tools
     [Serializable]
     public class PlayerState
     {
-        public Vector3 Position { get; set; }
-
     }
 
     [Serializable]

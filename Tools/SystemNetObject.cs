@@ -83,9 +83,11 @@ namespace TF.Tools
     public class JoinRoomS2C : SystemNetObject
     {
         public int PlayerId;
+        public BaseRoom Room;
 
-        public JoinRoomS2C(int playerId)
+        public JoinRoomS2C(int playerId,BaseRoom room)
         {
+            this.Room = room;
             this.PlayerId = playerId;
         }
     }

@@ -8,6 +8,7 @@ namespace TF.Tools.HauntedHouse
     public class HauntedHousePlayerState : PlayerState
     {
         //TODO 添加更多玩家状态
+        public Vector3 Position { get; set; }
     }
 
     [Serializable]
