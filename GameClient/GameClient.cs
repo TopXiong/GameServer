@@ -15,7 +15,7 @@ namespace TF.GameClient
 
         private const float WaitTime = 5f;
         //private Timer waitTimer;
-        private EventWaitHandle wait;
+        //private EventWaitHandle wait;
         /// <summary>
         /// 玩家加入事件
         /// </summary>
@@ -54,7 +54,7 @@ namespace TF.GameClient
             //    wait.Set();
             //    waitTimer.Stop();
             //};
-            wait = new EventWaitHandle(false, EventResetMode.AutoReset);
+            //wait = new EventWaitHandle(false, EventResetMode.AutoReset);
         }
 
         public void Datahandle(byte[] bytes)
@@ -74,17 +74,17 @@ namespace TF.GameClient
                 else if (systemNetObject.GetType() == typeof(CreateRoomS2C))
                 {
                     transmit = (systemNetObject as CreateRoomS2C).PlayerId;
-                    wait.Set();
+                    //wait.Set();
                 }
                 else if (systemNetObject.GetType() == typeof(JoinRoomS2C))
                 {
                     transmit = (systemNetObject as JoinRoomS2C);
-                    wait.Set();
+                    //wait.Set();
                 }
                 else if (systemNetObject.GetType() == typeof(GetRoomListS2C))
                 {
                     transmit = (systemNetObject as GetRoomListS2C).rooms;
-                    wait.Set();
+                    //wait.Set();
                 }
                 else if (systemNetObject.GetType() == typeof(PlayerJoinS2C))
                 {
@@ -159,7 +159,7 @@ namespace TF.GameClient
         {
             Send(new GetRoomListC2S());
             //waitTimer.Start();
-            wait.WaitOne();
+            //wait.WaitOne();
             return (List<BaseRoom>)transmit;
         }
 
@@ -173,7 +173,7 @@ namespace TF.GameClient
             CreateRoomC2S createRoom = new CreateRoomC2S(room);
             Send(createRoom);
             //waitTimer.Start();
-            wait.WaitOne();
+            //wait.WaitOne();
             return (int)transmit;
         }
 
@@ -187,7 +187,7 @@ namespace TF.GameClient
             JoinRoomC2S joinRoom = new JoinRoomC2S(roomID, password);
             Send(joinRoom);
             //waitTimer.Start();
-            wait.WaitOne();
+            //wait.WaitOne();
             playerInRoomID = ((JoinRoomS2C)transmit).PlayerId;
             return (HauntedHouseRoom)((JoinRoomS2C)transmit).Room;
         }
