@@ -3,7 +3,7 @@ using TF.Tools;
 
 namespace HauntedHouse
 {
-
+    [Serializable]
     public class GameStart : HauntedHouseNetObject
     {
         public GameStart() : base(666) { }
