@@ -1,5 +1,8 @@
-﻿namespace TF.Tools
+﻿using System;
+
+namespace TF.Tools
 {
+    [Serializable]
     public struct Vector3
     {
         public float x;
