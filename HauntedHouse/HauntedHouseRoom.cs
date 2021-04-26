@@ -1,8 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using HauntedHouse;
 
 namespace TF.Tools.HauntedHouse
 {
+    [Serializable]
+    public class HauntedHousePlayerState : PlayerState
+    {
+        //TODO 添加更多玩家状态
+    }
+
     [Serializable]
     public class HauntedHouseRoom : BaseRoom
     {
@@ -18,6 +25,19 @@ namespace TF.Tools.HauntedHouse
 
         public override void DataHandle(Guid userToken, GameNetObject gameNetObject)
         {
+            if (gameNetObject is PositionChange)
+            {
+                var positionNetObj = gameNetObject as PositionChange;
+                int playerId = ContainsPlayer(userToken);
+                if (!m_playerDic.ContainsKey(playerId))
+                {
+                    m_playerDic.Add(playerId, 
+                        new HauntedHousePlayerState()
+                        {
+                            Position = new Vector3(positionNetObj.x, positionNetObj.y, positionNetObj.z)
+                        });
+                }
+            }
             base.DataHandle(userToken, gameNetObject);
         }
 

@@ -1,4 +1,4 @@
-﻿namespace HauntedHouse
+﻿namespace TF.Tools
 {
     public struct Vector3
     {
