@@ -4,6 +4,11 @@ using TF.Tools;
 namespace HauntedHouse
 {
 
+    public class GameStart : HauntedHouseNetObject
+    {
+        public GameStart() : base(666) { }
+    }
+
     [Serializable]
     public class PositionChange : HauntedHouseNetObject
     {
