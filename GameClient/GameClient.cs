@@ -1,11 +1,11 @@
-﻿using System;
+﻿using HauntedHouse;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using TF.Tools;
-using TF.Tools.HauntedHouse;
 using Timer = System.Timers.Timer;
 
 namespace TF.GameClient
