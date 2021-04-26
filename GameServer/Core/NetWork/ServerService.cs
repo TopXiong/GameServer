@@ -219,6 +219,7 @@ namespace GameServer.Core.NetWork
             {
                 ProcessReceive(acceptArgs);
             }
+            SendData(userToken, new GetMyID(userToken.Guid));
             StartAccept(e);
         }
 

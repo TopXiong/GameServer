@@ -36,8 +36,9 @@ namespace TF.GameClient
                         case "JoinRoom":
                             Console.WriteLine("input RoomId");
                             int id = int.Parse(Console.ReadLine());
-                            var b = gameClient.JoinRoom(id);
-                            Console.WriteLine("JoinRoom " + b);
+                            int playerId;
+                            var b = gameClient.JoinRoom(id,out playerId);
+                            Console.WriteLine("JoinRoom " + b + "\n playerId : " + playerId);
                             break;
                         case "GetRoomList":
                             Console.WriteLine("Searching");

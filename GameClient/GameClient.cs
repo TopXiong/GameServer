@@ -67,6 +67,10 @@ namespace TF.GameClient
                 {
                     Console.WriteLine(systemNetObject);
                 }
+                else if(systemNetObject.GetType() == typeof(GetMyID))
+                {
+                    MyID = (systemNetObject as GetMyID).playerId;
+                }
                 else if (systemNetObject.GetType() == typeof(CreateRoomS2C))
                 {
                     transmit = (systemNetObject as CreateRoomS2C).PlayerId;
@@ -74,7 +78,7 @@ namespace TF.GameClient
                 }
                 else if (systemNetObject.GetType() == typeof(JoinRoomS2C))
                 {
-                    transmit = (systemNetObject as JoinRoomS2C).Room;
+                    transmit = (systemNetObject as JoinRoomS2C);
                     wait.Set();
                 }
                 else if (systemNetObject.GetType() == typeof(GetRoomListS2C))
@@ -178,13 +182,14 @@ namespace TF.GameClient
         /// </summary>
         /// <param name="room">房间号</param>
         /// <returns>在房间中的id,-1为不成功</returns>
-        public HauntedHouseRoom JoinRoom(int roomID, string password = "")
+        public HauntedHouseRoom JoinRoom(int roomID,out int playerInRoomID, string password = "")
         {
             JoinRoomC2S joinRoom = new JoinRoomC2S(roomID, password);
             Send(joinRoom);
             //waitTimer.Start();
             wait.WaitOne();
-            return (HauntedHouseRoom)transmit;
+            playerInRoomID = ((JoinRoomS2C)transmit).PlayerId;
+            return (HauntedHouseRoom)((JoinRoomS2C)transmit).Room;
         }
 
         #endregion

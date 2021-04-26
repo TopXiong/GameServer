@@ -26,6 +26,18 @@ namespace TF.Tools
             return Context;
         }
     }
+    
+    [Serializable]
+    public class GetMyID : SystemNetObject
+    {
+
+        public Guid playerId;
+
+        public GetMyID(Guid playerId)
+        {
+            this.playerId = playerId;
+        }
+    }
 
     [Serializable]
     public class HeartBeat : SystemNetObject
