@@ -75,7 +75,7 @@ namespace GameServer.Core.NetWork
             //房间不存在
             if (!id2rooms.ContainsKey(joinRoomC2S.RoomId))
             {
-                SendData(userToken, new JoinRoomS2C(-1));
+                SendData(userToken, new JoinRoomS2C(-1,null));
                 return;
             }
             //通过Id获取Room
@@ -83,7 +83,7 @@ namespace GameServer.Core.NetWork
             //验证密码
             if (!room.Password.Equals(joinRoomC2S.Password))
             {
-                SendData(userToken,new JoinRoomS2C(-1));
+                SendData(userToken,new JoinRoomS2C(-1, null));
                 return;
             }
             //加入是否成功
@@ -99,7 +99,7 @@ namespace GameServer.Core.NetWork
                     }
                 }
             }
-            SendData(userToken,new JoinRoomS2C(foundIndex));
+            SendData(userToken,new JoinRoomS2C(foundIndex, room));
         }
 
         private void GetRoomList(UserToken userToken)

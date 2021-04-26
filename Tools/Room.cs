@@ -7,8 +7,6 @@ namespace TF.Tools
     [Serializable]
     public class PlayerState
     {
-        public Vector3 Position { get; set; }
-
     }
 
     [Serializable]
@@ -91,6 +89,16 @@ namespace TF.Tools
                     Send(playerId, gameNetObject);
                 }
             }
+        }
+
+        /// <summary>
+        /// 给房主发消息
+        /// </summary>
+        /// <param name="gameNetObject"></param>
+        /// <param name="notSends"></param>
+        public void SendDataToRoomOwner(GameNetObject gameNetObject)
+        {
+            Send(Players[RoomOwnerIndex], gameNetObject);
         }
 
         /// <summary>

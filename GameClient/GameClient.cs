@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using TF.Tools;
-
+using TF.Tools.HauntedHouse;
 using Timer = System.Timers.Timer;
 
 namespace TF.GameClient
@@ -74,7 +74,7 @@ namespace TF.GameClient
                 }
                 else if (systemNetObject.GetType() == typeof(JoinRoomS2C))
                 {
-                    transmit = (systemNetObject as JoinRoomS2C).PlayerId;
+                    transmit = (systemNetObject as JoinRoomS2C).Room;
                     wait.Set();
                 }
                 else if (systemNetObject.GetType() == typeof(GetRoomListS2C))
@@ -178,13 +178,13 @@ namespace TF.GameClient
         /// </summary>
         /// <param name="room">房间号</param>
         /// <returns>在房间中的id,-1为不成功</returns>
-        public int JoinRoom(int roomID, string password = "")
+        public HauntedHouseRoom JoinRoom(int roomID, string password = "")
         {
             JoinRoomC2S joinRoom = new JoinRoomC2S(roomID, password);
             Send(joinRoom);
             //waitTimer.Start();
             wait.WaitOne();
-            return (int)transmit;
+            return (HauntedHouseRoom)transmit;
         }
 
         #endregion
