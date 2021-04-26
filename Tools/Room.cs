@@ -111,6 +111,11 @@ namespace TF.Tools
             SendDataToRoomPlayer(gameNetObject, new List<Guid>());
         }
 
+        public virtual void GameStart()
+        {
+
+        }
+
         /// <summary>
         /// 玩家离开
         /// </summary>
