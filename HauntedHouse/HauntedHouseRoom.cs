@@ -17,7 +17,6 @@ namespace HauntedHouse
     public class HauntedHouseRoom : BaseRoom
     {
 
-        private int m_currentPlayerCount;
 
         public override void GameStart()
         {
@@ -33,17 +32,11 @@ namespace HauntedHouse
         public override int PlayerJoin(Guid player)
         {
             int value = base.PlayerJoin(player);
-            m_currentPlayerCount++;
-            if(m_currentPlayerCount == MaxPlayerNum)
-            {
-                GameStart();
-            }
             return value;
         }
 
         public override void PlayerLeave(Guid player)
         {
-            m_currentPlayerCount--;
             base.PlayerLeave(player);
         }
 
