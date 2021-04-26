@@ -25,6 +25,11 @@ namespace HauntedHouse
         //{
         //    return new Vector3(pos.x,pos.y,pos.z);
         //}
+
+        public override string ToString()
+        {
+            return base.ToString() + $", [Position] = ({x}, {y}, {z})";
+        }
     }
 
     [Serializable]

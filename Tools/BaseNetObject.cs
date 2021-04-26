@@ -5,6 +5,25 @@ using System.Text;
 namespace TF.Tools
 {
     [Serializable]
+    public enum EntityType
+    {
+        /// <summary>
+        /// 幽灵猫
+        /// </summary>
+        GhostCat,
+
+        /// <summary>
+        /// 人
+        /// </summary>
+        Human,
+
+        /// <summary>
+        /// 
+        /// </summary>
+        Others,
+    }
+
+    [Serializable]
     public enum NetObjectType
     {
         SystemNetObject,
@@ -52,10 +71,17 @@ namespace TF.Tools
     [Serializable]
     public class HauntedHouseNetObject : GameNetObject
     {
+        public EntityType EType { get; set; }
+
         public HauntedHouseNetObject(int id) : base(id)
         {
             gameType = GameType.HauntedHouse;
             netObjectId = id;
+        }
+
+        public override string ToString()
+        {
+            return $"[ID] = {netObjectId}, [EntityType] = {EType}";
         }
     }
 

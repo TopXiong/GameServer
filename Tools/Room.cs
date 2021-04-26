@@ -5,7 +5,7 @@ using System.Text;
 namespace TF.Tools
 {
     [Serializable]
-    public class PlayerState
+    public class NetObjectState
     {
     }
 
@@ -26,9 +26,9 @@ namespace TF.Tools
         /// <summary>
         /// 玩家字典
         /// </summary>
-        protected Dictionary<int, PlayerState> m_playerDic = new Dictionary<int, PlayerState>();
+        protected Dictionary<int, NetObjectState> m_playerDic = new Dictionary<int, NetObjectState>();
 
-        public Dictionary<int, PlayerState> PlayerDic
+        public Dictionary<int, NetObjectState> PlayerDic
         {
             get => m_playerDic;
         }

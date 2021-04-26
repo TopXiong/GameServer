@@ -3,11 +3,14 @@ using TF.Tools;
 
 namespace HauntedHouse
 {
+    
     [Serializable]
-    public class HauntedHousePlayerState : PlayerState
+    public class HauntedHouseNetObjectState : NetObjectState
     {
         //TODO 添加更多玩家状态
         public Vector3 Position { get; set; }
+
+        public EntityType EType { get; set; }
     }
 
     [Serializable]
@@ -32,10 +35,19 @@ namespace HauntedHouse
                 if (!m_playerDic.ContainsKey(playerId))
                 {
                     m_playerDic.Add(playerId, 
-                        new HauntedHousePlayerState()
+                        new HauntedHouseNetObjectState()
                         {
-                            Position = new Vector3(positionNetObj.x, positionNetObj.y, positionNetObj.z)
+                            Position = new Vector3(positionNetObj.x, positionNetObj.y, positionNetObj.z),
+                            EType = positionNetObj.EType
                         });
+                }
+                else
+                {
+                    m_playerDic[playerId] = new HauntedHouseNetObjectState()
+                    {
+                        Position = new Vector3(positionNetObj.x, positionNetObj.y, positionNetObj.z),
+                        EType = positionNetObj.EType
+                    };
                 }
             }
             base.DataHandle(userToken, gameNetObject);
