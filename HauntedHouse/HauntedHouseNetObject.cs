@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Emit;
 using TF.Tools;
 
 namespace HauntedHouse
@@ -93,5 +94,19 @@ namespace HauntedHouse
         //}
     }
 
+    [Serializable]
+    public class PlayerAnimationChange : HauntedHouseNetObject
+    {
+        /// <summary>
+        /// 上一帧动画归一化速率
+        /// </summary>
+        private float animationNormalizedSpeed;
 
+        public float AnimationNormalizedSpeed => animationNormalizedSpeed;
+
+        public PlayerAnimationChange(int id, float normalizedSpeed) : base(id)
+        {
+            this.animationNormalizedSpeed = normalizedSpeed;
+        }
+    }
 }
