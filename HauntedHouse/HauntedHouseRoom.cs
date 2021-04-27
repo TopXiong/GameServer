@@ -14,6 +14,15 @@ namespace HauntedHouse
     }
 
     [Serializable]
+    public enum GameMessageType
+    {
+        /// <summary>
+        /// 游戏开始
+        /// </summary>
+        GameStart = 666,
+    }
+
+    [Serializable]
     public class HauntedHouseRoom : BaseRoom
     {
 
@@ -21,7 +30,7 @@ namespace HauntedHouse
         public override void GameStart()
         {
             base.GameStart();
-            SendDataToRoomAllPlayer(new GameStart());
+            SendDataToRoomAllPlayer(new GameStartMessage());
         }
 
         protected HauntedHouseRoom()

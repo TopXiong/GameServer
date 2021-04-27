@@ -4,9 +4,17 @@ using TF.Tools;
 namespace HauntedHouse
 {
     [Serializable]
-    public class GameStart : HauntedHouseNetObject
+    public class GameStartMessage : GameMessage
     {
-        public GameStart() : base(666) { }
+        public GameStartMessage() : base(GameMessageType.GameStart) { }
+    }
+
+    [Serializable]
+    public class GameMessage : HauntedHouseNetObject
+    {
+        public GameMessage(GameMessageType type) : base((int)type)
+        {
+        }
     }
 
     [Serializable]
