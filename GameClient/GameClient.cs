@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using TF.Tools;
 using Timer = System.Timers.Timer;
-
+using TF.Log;
 namespace TF.GameClient
 {
     public class GameClient
@@ -65,7 +65,7 @@ namespace TF.GameClient
                 SystemNetObject systemNetObject = bno as SystemNetObject;
                 if(systemNetObject.GetType() == typeof(Msg))
                 {
-                    Console.WriteLine(systemNetObject);
+                    Logger.WriteLog(systemNetObject);
                 }
                 else if(systemNetObject.GetType() == typeof(GetMyID))
                 {
@@ -101,13 +101,11 @@ namespace TF.GameClient
                 if (hauntedHouseNetObject == null)
                 {
                     throw new ArgumentException(bno.m_netObjectType + " Can't Used");
-                }else if(hauntedHouseNetObject is GameStart)
-                {
-                    transmit = (hauntedHouseNetObject as GameStart);
-                    wait.Set();
                 }
                 m_action(hauntedHouseNetObject);
             }
+            //防止死锁
+            wait.Set();
         }
 
         /// <summary>
