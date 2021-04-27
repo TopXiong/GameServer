@@ -104,8 +104,8 @@ namespace TF.GameClient
                 }
                 m_action(hauntedHouseNetObject);
             }
-            //防止死锁
-            wait.Set();
+            // 防止死锁
+            // wait.Set();
         }
 
         /// <summary>

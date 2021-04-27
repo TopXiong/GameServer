@@ -52,6 +52,9 @@ namespace TF.GameClient
                         case "LeaveRoom":
                             gameClient.LeaveRoom();
                             break;
+                        case "Start":
+                            gameClient.Send(new GameStartMessage());
+                            break;
                         default:
                             Console.WriteLine("Error Command");
                             break;
