@@ -101,9 +101,9 @@ namespace TF.GameClient
                 if (hauntedHouseNetObject == null)
                 {
                     throw new ArgumentException(bno.m_netObjectType + " Can't Used");
-                }else if(hauntedHouseNetObject is GameStart)
+                }else if(hauntedHouseNetObject is GameStartMessage)
                 {
-                    transmit = (hauntedHouseNetObject as GameStart);
+                    transmit = (hauntedHouseNetObject as GameStartMessage);
                     wait.Set();
                 }
                 m_action(hauntedHouseNetObject);
