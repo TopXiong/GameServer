@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="HauntedHouseNetObject.cs" />
     <Compile Include="HauntedHouseRoom.cs" />
+    <Compile Include="HauntedHouseUserUseData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

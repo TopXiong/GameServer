@@ -40,7 +40,6 @@ namespace TF.Tools
         /// <returns></returns> 
         public static object BytesToObject(byte[] bytes)
         {
-            Console.WriteLine(bytes.Length);
             using (MemoryStream ms = new MemoryStream(bytes))
             {
                 IFormatter formatter = new BinaryFormatter();

@@ -12,6 +12,30 @@ namespace HauntedHouse
     }
 
     [Serializable]
+    public class PlayerSelectRole : GameMessage
+    {
+        /// <summary>
+        /// 自己在房间中的ID
+        /// </summary>
+        public int PlayerID;
+        /// <summary>
+        /// 选的角色类型
+        /// </summary>
+        public EntityType PlayerType;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="playerid">自己在房间中的ID</param>
+        /// <param name="entity">选的角色类型</param>
+        public PlayerSelectRole(int playerid,EntityType entity) : base(GameMessageType.PlayerSelectRole)
+        {
+            PlayerType = entity;
+            PlayerID = playerid;
+        }
+    }
+
+    [Serializable]
     public class GameMessage : HauntedHouseNetObject
     {
         protected GameMessageType m_messageType;

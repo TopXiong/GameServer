@@ -10,6 +10,12 @@ namespace TF.Tools
 {
     public class UserToken
     {
+        [Serializable]
+        public abstract class UserData
+        {
+
+        }
+
         /// <summary>  
         /// 客户端IP地址  
         /// </summary>  
@@ -34,9 +40,9 @@ namespace TF.Tools
         /// 数据缓存区  
         /// </summary>  
         public List<byte> Buffer { get; set; }
+        public UserData PlayerData { get; set; }
 
         #region Data
-        public string username { get; set; }
 
         public Guid Guid { get; set; }
 

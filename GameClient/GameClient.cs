@@ -145,6 +145,15 @@ namespace TF.GameClient
         }
 
         /// <summary>
+        /// 登入后发送用户信息
+        /// </summary>
+        /// <param name="s"></param>
+        public void SendUserData(HauntedHouseUserData userData)
+        {
+            Send(new SetUserData(userData));
+        }
+
+        /// <summary>
         /// 离开房间
         /// </summary>
         /// <returns></returns>
