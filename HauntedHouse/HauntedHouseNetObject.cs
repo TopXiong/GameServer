@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection.Emit;
+using System.Security.Cryptography.X509Certificates;
 using TF.Tools;
 
 namespace HauntedHouse
@@ -37,8 +38,16 @@ namespace HauntedHouse
     [Serializable]
     public class GameMessage : HauntedHouseNetObject
     {
+        protected GameMessageType m_messageType;
+
         public GameMessage(GameMessageType type) : base((int)type)
         {
+            m_messageType = type;
+        }
+
+        public override string ToString()
+        {
+            return m_messageType.ToString();
         }
     }
 
@@ -92,6 +101,11 @@ namespace HauntedHouse
         //{
         //    return new Vector3(pos.x, pos.y, pos.z);
         //}
+
+        public override string ToString()
+        {
+            return base.ToString() + $", [Rotation] = ({x}, {y}, {z})";
+        }
     }
 
     [Serializable]
@@ -116,21 +130,27 @@ namespace HauntedHouse
         //{
         //    return new Vector3(pos.x, pos.y, pos.z);
         //}
+        public override string ToString()
+        {
+            return base.ToString() + $", [Scale] = ({x}, {y}, {z})";
+        }
     }
 
     [Serializable]
-    public class PlayerAnimationChange : HauntedHouseNetObject
+    public class VelocityChange : HauntedHouseNetObject
     {
-        /// <summary>
-        /// 上一帧动画归一化速率
-        /// </summary>
-        private float animationNormalizedSpeed;
+        public float x, y, z;
 
-        public float AnimationNormalizedSpeed => animationNormalizedSpeed;
-
-        public PlayerAnimationChange(int id, float normalizedSpeed) : base(id)
+        public VelocityChange(int id, Vector3 velocity) : base(id)
         {
-            this.animationNormalizedSpeed = normalizedSpeed;
+            x = velocity.x;
+            y = velocity.y;
+            z = velocity.z;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + $", [Velocity] = ({x}, {y}, {z})";
         }
     }
 }
