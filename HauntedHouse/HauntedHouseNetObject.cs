@@ -33,6 +33,11 @@ namespace HauntedHouse
             PlayerType = entity;
             PlayerID = playerid;
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + $"[Id]: {PlayerID}, [EntityType]: {PlayerType}";
+        }
     }
 
     [Serializable]

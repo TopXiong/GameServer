@@ -20,10 +20,7 @@ namespace HauntedHouse
         /// 游戏开始
         /// </summary>
         GameStart = 666,
-        /// <summary>
-        /// 选择角色
-        /// </summary>
-        SelectRole,
+
         /// <summary>
         /// 其他玩家选择角色
         /// </summary>
