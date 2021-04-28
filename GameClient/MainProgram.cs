@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HauntedHouse;
 using TF.Tools;
 
@@ -39,6 +40,7 @@ namespace TF.GameClient
                             int playerId;
                             var b = gameClient.JoinRoom(id,out playerId);
                             Console.WriteLine("JoinRoom " + b + "\n playerId : " + playerId);
+                            Console.WriteLine(StringTools.ArrayToString(b.UserData));
                             break;
                         case "GetRoomList":
                             Console.WriteLine("Searching");
@@ -47,6 +49,7 @@ namespace TF.GameClient
                             foreach (var baseRoom in rooms)
                             {
                                 Console.WriteLine(baseRoom.ToString());
+                                Console.WriteLine(StringTools.ArrayToString(baseRoom.UserData));
                             }
                             break;
                         case "LeaveRoom":
@@ -54,6 +57,11 @@ namespace TF.GameClient
                             break;
                         case "Start":
                             gameClient.Send(new GameStartMessage());
+                            break;
+                        case "ChangeUserData":
+                            Console.WriteLine("Input Your Name");
+                            string name = Console.ReadLine();
+                            gameClient.SendUserData(new HauntedHouseUserData(name,EntityType.GhostCat));
                             break;
                         default:
                             Console.WriteLine("Error Command");
