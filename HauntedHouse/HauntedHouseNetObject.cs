@@ -154,6 +154,7 @@ namespace HauntedHouse
         }
     }
 
+    [Serializable]
     public class AnimationChange : HauntedHouseNetObject
     {
         public float animationNormalizedSpeed;
