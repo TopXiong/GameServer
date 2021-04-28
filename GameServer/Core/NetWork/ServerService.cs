@@ -60,7 +60,7 @@ namespace GameServer.Core.NetWork
                 return;
             }
             id2rooms.Add(roomId, createRoom.room);
-            int playerIndex = createRoom.room.PlayerJoin(userToken.Guid);
+            int playerIndex = createRoom.room.PlayerJoin(userToken.Guid,userToken.PlayerData);
             SendData(userToken, new CreateRoomS2C(playerIndex));
         }
 
@@ -87,7 +87,7 @@ namespace GameServer.Core.NetWork
                 return;
             }
             //加入是否成功
-            int foundIndex = room.PlayerJoin(userToken.Guid);
+            int foundIndex = room.PlayerJoin(userToken.Guid,userToken.PlayerData);
             if (foundIndex != -1)
             {                
                 foreach (var playerId in room.Players)
@@ -105,6 +105,22 @@ namespace GameServer.Core.NetWork
         private void GetRoomList(UserToken userToken)
         {            
             SendData(userToken, new GetRoomListS2C(id2rooms.Values.ToList()));
+        }
+
+        private void SetUserData(UserToken userToken, SetUserData setUserData)
+        {
+            userToken.PlayerData = setUserData.UserData;
+            var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.Guid) != -1 select linqroom;
+            if (linqrooms.Count() > 0)
+            {
+                var room = linqrooms.First().Value;
+
+                var playerid = room.ContainsPlayer(userToken.Guid);
+
+                room.UserData[playerid] = userToken.PlayerData;
+
+            }
+
         }
 
         private void LeaveRoom(UserToken userToken)
@@ -180,6 +196,11 @@ namespace GameServer.Core.NetWork
             {
                 LeaveRoom(userToken);
             }
+            //设置玩家信息
+            else if (systemNeObject.GetType() == typeof(SetUserData))
+            {
+                SetUserData(userToken, systemNeObject as SetUserData);
+            }
         }
 
         public void StartAccept(SocketAsyncEventArgs acceptEventArg)
@@ -207,7 +228,6 @@ namespace GameServer.Core.NetWork
             SocketAsyncEventArgs acceptArgs = new SocketAsyncEventArgs();
             acceptArgs.Completed += IO_Completed;
             UserToken userToken = new UserToken();
-            userToken.username = "Mtt";
             userToken.Socket = e.AcceptSocket;
             userToken.ConnectTime = DateTime.Now;
             userToken.Remote = e.AcceptSocket.RemoteEndPoint;
