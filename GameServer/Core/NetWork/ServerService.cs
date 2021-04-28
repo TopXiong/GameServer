@@ -107,6 +107,11 @@ namespace GameServer.Core.NetWork
             SendData(userToken, new GetRoomListS2C(id2rooms.Values.ToList()));
         }
 
+        /// <summary>
+        /// 查找玩家房间,并修改用户信息
+        /// </summary>
+        /// <param name="userToken"></param>
+        /// <param name="setUserData"></param>
         private void SetUserData(UserToken userToken, SetUserData setUserData)
         {
             userToken.PlayerData = setUserData.UserData;
