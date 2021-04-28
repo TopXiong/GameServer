@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TF.Tools
 {
@@ -42,6 +38,18 @@ namespace TF.Tools
     [Serializable]
     public class HeartBeat : SystemNetObject
     {
+    }
+
+    [Serializable]
+    public class SetUserData: SystemNetObject
+    {
+        public UserToken.UserData UserData;
+
+        public SetUserData(UserToken.UserData userData)
+        {
+            UserData = userData;
+        }
+
     }
 
     [Serializable]

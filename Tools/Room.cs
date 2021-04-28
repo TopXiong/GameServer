@@ -18,10 +18,15 @@ namespace TF.Tools
         protected int m_id;
         //玩家
         protected Guid[] m_playersID;
+
+        protected UserToken.UserData[] m_userData;
+
         //房间密码
         protected string m_password;
         //房主
         protected int m_roomOwner;
+
+        public int CurrentPlayCount { get; private set; }
 
         /// <summary>
         /// 玩家字典
@@ -36,6 +41,7 @@ namespace TF.Tools
         protected BaseRoom(int maxPlayerNum, string password)
         {
             m_playersID = new Guid[maxPlayerNum];
+            m_userData = new UserToken.UserData[maxPlayerNum];
             this.m_maxPlayerNum = maxPlayerNum;
             this.Password = password;
             m_roomOwner = 0;
@@ -49,6 +55,9 @@ namespace TF.Tools
         /// </summary>
         public string Password { get => m_password; private set => m_password = value; }
         public Guid[] Players { get => m_playersID; private set => m_playersID = value; }
+
+        public UserToken.UserData[] UserData => m_userData;
+
         public int MaxPlayerNum 
         { 
             get => m_maxPlayerNum; 
@@ -66,10 +75,9 @@ namespace TF.Tools
         /// <param name="gameNetObject"></param>
         public virtual void DataHandle(Guid userToken, GameNetObject gameNetObject)
         {
-            var list = new List<Guid>();
-            list.Add(userToken);
             Console.WriteLine(gameNetObject);
-            SendDataToRoomPlayer(gameNetObject, list);
+            
+            SendDataToOtherRoomPlayer(gameNetObject, userToken);
         }
 
         public static Action<Guid,GameNetObject> Send;
@@ -84,6 +92,23 @@ namespace TF.Tools
             foreach (var playerId in Players)
             {
                 if (!notSends.Contains(playerId) && playerId != Guid.Empty)
+                {
+                    //发送玩家加入消息
+                    Send(playerId, gameNetObject);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 对房间所有的玩家发送消息
+        /// </summary>
+        /// <param name="room"></param>
+        /// <param name="baseNetObject"></param>
+        public void SendDataToOtherRoomPlayer(GameNetObject gameNetObject, Guid notSends)
+        {
+            foreach (var playerId in Players)
+            {
+                if (notSends != playerId && playerId != Guid.Empty)
                 {
                     //发送玩家加入消息
                     Send(playerId, gameNetObject);
@@ -127,6 +152,7 @@ namespace TF.Tools
                 if (Players[i] == player)
                 {
                     Players[i] = Guid.Empty;
+                    CurrentPlayCount--;
                     return;
                 }
             }
@@ -154,13 +180,15 @@ namespace TF.Tools
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public virtual int PlayerJoin(Guid player)
+        public virtual int PlayerJoin(Guid player,UserToken.UserData userdata)
         {
             for (int i = 0; i < Players.Length; i++)
             {
                 if (Players[i] == Guid.Empty)
                 {
+                    CurrentPlayCount++;
                     Players[i] = player;
+                    UserData[i] = userdata;
                     return i;
                 }
             }
