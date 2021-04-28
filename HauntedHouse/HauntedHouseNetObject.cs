@@ -18,19 +18,17 @@ namespace HauntedHouse
         /// 自己在房间中的ID
         /// </summary>
         public int PlayerID;
-        /// <summary>
-        /// 选的角色类型
-        /// </summary>
-        public EntityType PlayerType;
+
+        public HauntedHouseUserData Player;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="playerid">自己在房间中的ID</param>
         /// <param name="entity">选的角色类型</param>
-        public PlayerSelectRole(int playerid,EntityType entity) : base(GameMessageType.PlayerSelectRole)
+        public PlayerSelectRole(int playerid, HauntedHouseUserData player) : base(GameMessageType.PlayerSelectRole)
         {
-            PlayerType = entity;
+            Player = player;
             PlayerID = playerid;
         }
     }
