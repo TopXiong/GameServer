@@ -180,6 +180,23 @@ namespace TF.Tools
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
+        public virtual int ContainsPlayer(UserToken.UserData userData)
+        {
+            for (int i = 0; i < Players.Length; i++)
+            {
+                if (UserData[i] == userData)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// 返回玩家在房间中的ID
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
         public virtual int PlayerJoin(Guid player,UserToken.UserData userdata)
         {
             for (int i = 0; i < Players.Length; i++)

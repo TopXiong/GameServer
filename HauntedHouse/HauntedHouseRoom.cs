@@ -72,18 +72,11 @@ namespace HauntedHouse
                     };
                 }
             }
-
+            //保存玩家信息
             if (gameNetObject is PlayerSelectRole)
             {
                 PlayerSelectRole psr = gameNetObject as PlayerSelectRole;
-                if (UserData[psr.PlayerID] == null)
-                {
-                    UserData[psr.PlayerID] = new HauntedHouseUserData("无名氏",psr.PlayerType);
-                }
-                else
-                {
-                    (UserData[psr.PlayerID] as HauntedHouseUserData).EntityType = psr.PlayerType;
-                }
+                UserData[psr.PlayerID] = psr.Player;
             }
             base.DataHandle(userToken, gameNetObject);
         }
