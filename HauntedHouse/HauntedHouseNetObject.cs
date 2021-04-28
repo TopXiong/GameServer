@@ -151,4 +151,20 @@ namespace HauntedHouse
             return base.ToString() + $", [Velocity] = ({x}, {y}, {z})";
         }
     }
+
+    [Serializable]
+    public class AnimationChange : HauntedHouseNetObject
+    {
+        public float animationNormalizedSpeed;
+
+        public AnimationChange(int id, float speed) : base(id)
+        {
+            animationNormalizedSpeed = speed;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + $", [AnimationNormalizedSpeed] = ({animationNormalizedSpeed})";
+        }
+    }
 }
