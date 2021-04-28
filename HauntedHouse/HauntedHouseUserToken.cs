@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TF.Tools;
 
 namespace HauntedHouse
 {
-    public class HauntedHouseUserToken : UserToken
+    public class HauntedHouseUserUseData : UserToken
     {
 
         public UserToken m_userToken;

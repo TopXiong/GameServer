@@ -20,6 +20,14 @@ namespace HauntedHouse
         /// 游戏开始
         /// </summary>
         GameStart = 666,
+        /// <summary>
+        /// 选择角色
+        /// </summary>
+        SelectRole,
+        /// <summary>
+        /// 其他玩家选择角色
+        /// </summary>
+        PlayerSelectRole,
     }
 
     [Serializable]
@@ -36,17 +44,6 @@ namespace HauntedHouse
         protected HauntedHouseRoom()
         {
             
-        }
-
-        public override int PlayerJoin(Guid player)
-        {
-            int value = base.PlayerJoin(player);
-            return value;
-        }
-
-        public override void PlayerLeave(Guid player)
-        {
-            base.PlayerLeave(player);
         }
 
         public HauntedHouseRoom(int id ,string password="") :base(2,password)
@@ -78,9 +75,20 @@ namespace HauntedHouse
                     };
                 }
             }
+
+            if (gameNetObject is PlayerSelectRole)
+            {
+                PlayerSelectRole psr = gameNetObject as PlayerSelectRole;
+                if (UserData[psr.PlayerID] == null)
+                {
+                    UserData[psr.PlayerID] = new HauntedHouseUserData("无名氏",psr.PlayerType);
+                }
+                else
+                {
+                    (UserData[psr.PlayerID] as HauntedHouseUserData).EntityType = psr.PlayerType;
+                }
+            }
             base.DataHandle(userToken, gameNetObject);
         }
-
-
     }
 }
