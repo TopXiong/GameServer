@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reflection.Emit;
-using System.Security.Cryptography.X509Certificates;
 using TF.Tools;
 
 namespace HauntedHouse
@@ -34,7 +32,7 @@ namespace HauntedHouse
 
         public override string ToString()
         {
-            return base.ToString() + $"[Id]: {PlayerID}, [EntityType]: {PlayerType}";
+            return base.ToString() + $", [Id]: {PlayerID}, [PlayerData]: {Player}";
         }
     }
 
