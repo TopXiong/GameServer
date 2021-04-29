@@ -190,19 +190,4 @@ namespace HauntedHouse
             return base.ToString() + $", [AnimationSpeed] = ({animationSpeed})";
         }
     }
-
-    [Serializable]
-    public class LivingStateChange : HauntedHouseNetObject
-    {
-        public bool isObjectAlive;
-        public LivingStateChange(int id, bool m_isAlive) : base(id)
-        { 
-            isObjectAlive = m_isAlive;
-        }
-
-        public override string ToString()
-        {
-            return base.ToString() + $", [ObjectAlive] = ({isObjectAlive})";
-        }
-    }
 }
