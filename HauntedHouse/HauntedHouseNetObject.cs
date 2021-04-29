@@ -176,24 +176,6 @@ namespace HauntedHouse
     }
 
     [Serializable]
-    public class VelocityChange : HauntedHouseNetObject
-    {
-        public float x, y, z;
-
-        public VelocityChange(int id, Vector3 velocity) : base(id)
-        {
-            x = velocity.x;
-            y = velocity.y;
-            z = velocity.z;
-        }
-
-        public override string ToString()
-        {
-            return base.ToString() + $", [Velocity] = ({x}, {y}, {z})";
-        }
-    }
-
-    [Serializable]
     public class AnimationChange : HauntedHouseNetObject
     {
         public float animationSpeed;
@@ -206,6 +188,21 @@ namespace HauntedHouse
         public override string ToString()
         {
             return base.ToString() + $", [AnimationSpeed] = ({animationSpeed})";
+        }
+    }
+
+    [Serializable]
+    public class LivingStateChange : HauntedHouseNetObject
+    {
+        public bool isObjectAlive;
+        public LivingStateChange(int id, bool m_isAlive) : base(id)
+        { 
+            isObjectAlive = m_isAlive;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + $", [ObjectAlive] = ({isObjectAlive})";
         }
     }
 }
