@@ -25,6 +25,16 @@ namespace HauntedHouse
         /// 其他玩家选择角色
         /// </summary>
         PlayerSelectRole,
+
+        /// <summary>
+        /// 生成物体
+        /// </summary>
+        Instantiate,
+
+        /// <summary>
+        /// 销毁物体
+        /// </summary>
+        Destroy
     }
 
     [Serializable]

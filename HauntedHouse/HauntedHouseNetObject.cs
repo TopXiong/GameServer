@@ -4,6 +4,44 @@ using TF.Tools;
 namespace HauntedHouse
 {
     [Serializable]
+    public class InstantiateNetObjectMessage : GameMessage
+    {
+        public string PrefabName;
+
+        public Vector3 Position;
+
+        public Quaternion Rotation;
+
+        public InstantiateNetObjectMessage(string prefabName, Vector3 position, Quaternion rotation) : base(GameMessageType.Instantiate)
+        {
+            PrefabName = prefabName;
+            Position = position;
+            Rotation = rotation;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + $"[Instantiate] : {PrefabName}";
+        }
+    }
+
+    [Serializable]
+    public class DestroyNetObjectMessage : GameMessage
+    {
+        public object ObjectRef;
+
+        public DestroyNetObjectMessage(object objectRef) : base(GameMessageType.Destroy)
+        {
+            ObjectRef = objectRef;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + $"[Destroy] : {ObjectRef}";
+        }
+    }
+
+    [Serializable]
     public class GameStartMessage : GameMessage
     {
         public GameStartMessage() : base(GameMessageType.GameStart) { }

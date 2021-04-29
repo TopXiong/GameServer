@@ -73,7 +73,7 @@
     <Compile Include="StringTools.cs" />
     <Compile Include="SystemNetObject.cs" />
     <Compile Include="UserToken.cs" />
-    <Compile Include="Vector3.cs" />
+    <Compile Include="Math3D.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
