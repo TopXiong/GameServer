@@ -9,7 +9,6 @@ using GameServer.Core;
 using GameServer.Core.NetWork;
 using GameServer.Core.Tools;
 using GameServer;
-using Lister13;
 using TF.Log;
 
 namespace GameServer

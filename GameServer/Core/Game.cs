@@ -11,8 +11,12 @@ namespace GameServer.Core
 
         public static ServerService serverService = new ServerService();
 
+        //static PhysXTestEngine engine = new PhysXTestEngine();
+
+
         public static void Awake()
         {
+            //engine.Awake();
             EventSystem.Awake();
         }
 
@@ -23,6 +27,7 @@ namespace GameServer.Core
 
         public static void Update()
         {
+            //engine.Update();
             EventSystem.Update();
         }
 
