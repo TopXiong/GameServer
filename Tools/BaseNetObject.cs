@@ -24,14 +24,9 @@ namespace TF.Tools
     }
 
     [Serializable]
-    public enum NetObjectType
-    {
-        SystemNetObject,
-        GameNetObject,
-    }
-    [Serializable]
     public enum GameType
     {
+        Sample,
         DirtyPig,
         HauntedHouse,
     }
@@ -41,7 +36,7 @@ namespace TF.Tools
     [Serializable]
     public abstract class BaseNetObject
     {
-        public NetObjectType m_netObjectType;
+        
     }
     /// <summary>
     /// 系统消息基类
@@ -49,40 +44,36 @@ namespace TF.Tools
     [Serializable]
     public abstract class SystemNetObject : BaseNetObject
     {
-        public SystemNetObject()
-        {
-            m_netObjectType = NetObjectType.SystemNetObject;
-        }
+
     }
     [Serializable]
     public abstract class GameNetObject : BaseNetObject
     {
         public GameType gameType;
 
-        public int netObjectId;
+        public Guid netObjectId;
 
-        public GameNetObject(int id)
+        public GameNetObject(Guid id)
         {
-            m_netObjectType = NetObjectType.GameNetObject;
             netObjectId = id;
         }
     }
 
-    [Serializable]
-    public class HauntedHouseNetObject : GameNetObject
-    {
-        public EntityType EType { get; set; }
+    //[Serializable]
+    //public class HauntedHouseNetObject : GameNetObject
+    //{
+    //    public EntityType EType { get; set; }
 
-        public HauntedHouseNetObject(int id) : base(id)
-        {
-            gameType = GameType.HauntedHouse;
-            netObjectId = id;
-        }
+    //    public HauntedHouseNetObject(int id) : base(id)
+    //    {
+    //        gameType = GameType.HauntedHouse;
+    //        netObjectId = id;
+    //    }
 
-        public override string ToString()
-        {
-            return $"[ID] = {netObjectId}, [EntityType] = {EType}";
-        }
-    }
+    //    public override string ToString()
+    //    {
+    //        return $"[ID] = {netObjectId}, [EntityType] = {EType}";
+    //    }
+    //}
 
 }

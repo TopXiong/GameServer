@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Tools.User;
 using System.Linq;
+using TF.Tools;
 
-namespace TF.Tools
+namespace GameServer.Core.RoomSystem
 {
     [Serializable]
     public class NetObjectState
@@ -14,28 +15,23 @@ namespace TF.Tools
     [Serializable]
     public class BaseRoom
     {
-        //玩家数据
-        protected UserData[] m_userData;
-
         //房间密码
         protected string m_password;
+        protected Guid[] m_playersGuid;
 
-        /// <summary>
-        /// 房间的配置
-        /// </summary>
-        protected RoomDesc RoomDesc = new RoomDesc();
+        public RoomDesc RoomDesc => RoomState.RoomDesc;
 
         /// <summary>
         /// 房间的状态
         /// </summary>
-        protected RoomState RoomState = new RoomState();
+        public RoomState RoomState;
 
-        protected BaseRoom(int maxPlayerNum, string password)
+        public BaseRoom(RoomDesc roomDesc, string password)
         {
-            m_userData = new UserData[maxPlayerNum];
-            RoomDesc.MaxPlayerNum = maxPlayerNum;
-            this.Password = password;
+            RoomState = new RoomState(roomDesc);
             RoomState.RoomOwner = 0;
+            m_playersGuid = new Guid[roomDesc.MaxPlayerNum];
+            this.Password = password;
         }
         /// <summary>
         /// 房主位置
@@ -45,13 +41,11 @@ namespace TF.Tools
         /// 密码
         /// </summary>
         public string Password { get => m_password; private set => m_password = value; }
-        public Guid[] Players { get => (from x in m_userData
-                                        select x.Guid).ToArray();
-        }
+        public Guid[] Players => m_playersGuid;
 
         public int CurrentPlayCount { get => RoomState.CurrentPlayCount; protected set => RoomState.CurrentPlayCount=value; }
 
-        public UserData[] UserData => m_userData;
+        public UserData[] UserData => RoomState.UserDatas;
 
         public int MaxPlayerNum 
         { 
@@ -147,6 +141,7 @@ namespace TF.Tools
                 if (Players[i] == player)
                 {
                     Players[i] = Guid.Empty;
+                    UserData[i] = null;
                     CurrentPlayCount--;
                     return;
                 }
@@ -175,31 +170,14 @@ namespace TF.Tools
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public virtual int ContainsPlayer(UserData userData)
-        {
-            for (int i = 0; i < Players.Length; i++)
-            {
-                if (UserData[i] == userData)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// 返回玩家在房间中的ID
-        /// </summary>
-        /// <param name="player"></param>
-        /// <returns></returns>
-        public virtual int PlayerJoin(Guid player,UserData userdata)
+        public virtual int PlayerJoin(UserData userdata)
         {
             for (int i = 0; i < Players.Length; i++)
             {
                 if (Players[i] == Guid.Empty)
                 {
                     CurrentPlayCount++;
-                    Players[i] = player;
+                    Players[i] = userdata.Guid;
                     UserData[i] = userdata;
                     return i;
                 }

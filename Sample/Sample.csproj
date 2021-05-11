@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{977495CA-2C9F-4732-8C9C-980FF36B03F3}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>GameServer</RootNamespace>
-    <AssemblyName>GameServer</AssemblyName>
+    <ProjectGuid>{773C7D37-B4C4-405B-AF4B-F7668918BF70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sample</RootNamespace>
+    <AssemblyName>Sample</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -35,7 +33,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,36 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Attribute\ObjectSystemAttribute.cs" />
-    <Compile Include="Core\Base\BaseAttribute.cs" />
-    <Compile Include="Core\Base\BaseGameObject.cs" />
-    <Compile Include="Core\EventSystem.cs" />
-    <Compile Include="Core\Game.cs" />
-    <Compile Include="Core\Interface\SystemInterface.cs" />
-    <Compile Include="Core\NetWork\ServerService.cs" />
-    <Compile Include="Core\RoomSystem\Room.cs" />
-    <Compile Include="Core\Tools\HashTable.cs" />
-    <Compile Include="Core\Tools\MultiMap.cs" />
-    <Compile Include="Core\Tools\TimerManager.cs" />
-    <Compile Include="Core\Tools\UnOrderMultiMap.cs" />
-    <Compile Include="Core\Tools\UnOrderMultiMapSet.cs" />
-    <Compile Include="Core\User\UserToken.cs" />
-    <Compile Include="MainProgram.cs" />
+    <Compile Include="SampleRoomDesc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sample\Sample.csproj">
-      <Project>{773c7d37-b4c4-405b-af4b-f7668918bf70}</Project>
-      <Name>Sample</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Tools\Tools.csproj">
       <Project>{0009e6c7-ccd1-45df-b728-138de059eac1}</Project>
       <Name>Tools</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

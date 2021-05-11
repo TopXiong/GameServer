@@ -31,7 +31,7 @@ namespace TF.GameClient
         /// <summary>
         /// 收到数据后的回调
         /// </summary>
-        private Action<HauntedHouseNetObject> m_action;
+        private Action<GameNetObject> m_action;
 
         public Guid MyID { get; private set; }
 
@@ -41,7 +41,7 @@ namespace TF.GameClient
         /// <param name="ip"></param>
         /// <param name="port"></param>
         /// <param name="action">收到数据后的回调</param>
-        public GameClient(String ip, Int32 port, Action<HauntedHouseNetObject> action)
+        public GameClient(String ip, Int32 port, Action<GameNetObject> action)
         {
             m_clientSocket = new ClientSocket(ip, port);
             m_action = action;
@@ -59,7 +59,7 @@ namespace TF.GameClient
         public void Datahandle(byte[] bytes)
         {
             BaseNetObject bno = NetBaseTool.BytesToObject(bytes) as BaseNetObject;
-            if (bno.m_netObjectType == NetObjectType.SystemNetObject)
+            if (bno is SystemNetObject)
             {
                 SystemNetObject systemNetObject = bno as SystemNetObject;
                 if(systemNetObject.GetType() == typeof(Msg))
@@ -96,12 +96,12 @@ namespace TF.GameClient
             }
             else
             {
-                HauntedHouseNetObject hauntedHouseNetObject = bno as HauntedHouseNetObject;
-                if (hauntedHouseNetObject == null)
+                GameNetObject gno = bno as GameNetObject;
+                if (gno == null)
                 {
-                    throw new ArgumentException(bno.m_netObjectType + " Can't Used");
+                    throw new ArgumentException(bno.GetType() + " Can't Used");
                 }
-                m_action(hauntedHouseNetObject);
+                m_action(gno);
             }
             //防止死锁
             // wait.Set();
@@ -120,9 +120,9 @@ namespace TF.GameClient
         /// 构建一个HauntedHouseNetObject对象并发送,HauntedHouseNetObject类型放在Tools/Games/HauntedHouse下
         /// </summary>
         /// <param name="hauntedHouseNetObject"></param>
-        public void Send(HauntedHouseNetObject hauntedHouseNetObject)
+        public void Send(GameNetObject gno)
         {
-            Send(hauntedHouseNetObject as BaseNetObject);
+            Send(gno);
         }
 
         private void Send(BaseNetObject baseNetObject)
@@ -165,12 +165,12 @@ namespace TF.GameClient
         /// 获取房间List
         /// </summary>
         /// <returns>房间List</returns>
-        public List<BaseRoom> GetRoomList()
+        public List<RoomState> GetRoomList()
         {
             Send(new GetRoomListC2S());
             //waitTimer.Start();
             wait.WaitOne();
-            return (List<BaseRoom>)transmit;
+            return (List<RoomState>)transmit;
         }
 
         /// <summary>
@@ -178,9 +178,9 @@ namespace TF.GameClient
         /// </summary>
         /// <param name="room">房间号及其配置</param>
         /// <returns>在房间中的id,-1为不成功</returns>
-        public int CreateRoom(BaseRoom room)
+        public int CreateRoom(RoomDesc room,string password)
         {
-            CreateRoomC2S createRoom = new CreateRoomC2S(room);
+            CreateRoomC2S createRoom = new CreateRoomC2S(room, password);
             Send(createRoom);
             //waitTimer.Start();
             wait.WaitOne();
@@ -192,7 +192,7 @@ namespace TF.GameClient
         /// </summary>
         /// <param name="room">房间号</param>
         /// <returns>在房间中的id,-1为不成功</returns>
-        public BaseRoom JoinRoom(int roomID,out int playerInRoomID, string password = "")
+        public RoomState JoinRoom(int roomID,out int playerInRoomID, string password = "")
         {
             JoinRoomC2S joinRoom = new JoinRoomC2S(roomID, password);
             Send(joinRoom);

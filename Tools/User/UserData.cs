@@ -7,9 +7,19 @@ using System.Threading.Tasks;
 namespace Tools.User
 {
     [Serializable]
-    public abstract class UserData
+    public class UserData
     {
         public Guid Guid { get; set; }
+
+        public UserData()
+        {
+            Guid = Guid.Empty;
+        }
+
+        public override string ToString()
+        {
+            return "PlayerID : " + Guid;
+        }
 
     }
 }

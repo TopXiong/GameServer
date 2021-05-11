@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tools.User;
 
 namespace TF.Tools
 {
@@ -21,6 +22,23 @@ namespace TF.Tools
         /// </summary>
         public int CurrentPlayCount;
 
+        //玩家数据
+        public UserData[] UserDatas;
+        /// <summary>
+        /// 房间的配置
+        /// </summary>
+        public RoomDesc RoomDesc;
+
+        public RoomState(RoomDesc roomDesc)
+        {
+            RoomDesc = roomDesc;
+            UserDatas = new UserData[roomDesc.MaxPlayerNum];
+        }
+
+        public override string ToString()
+        {
+            return "[ RoomState : \n    RoomDesc: " + RoomDesc + " UserData : " + StringTools.ArrayToString(UserDatas) + " ]";
+        }
 
     }
 }

@@ -6,6 +6,8 @@ using System.Net.Sockets;
 using System.Linq;
 using TF.Tools;
 using TF.Log;
+using GameServer.Core.RoomSystem;
+using GameServer.Core.User;
 
 namespace GameServer.Core.NetWork
 {
@@ -53,14 +55,16 @@ namespace GameServer.Core.NetWork
 
         private void CreateRoom(UserToken userToken, CreateRoomC2S createRoom)
         {
-            int roomId = createRoom.room.Id;
+            int roomId = createRoom.RoomDesc.ID;
             if (id2rooms.ContainsKey(roomId))
             {
                 SendData(userToken, new CreateRoomS2C(-1));
                 return;
             }
-            id2rooms.Add(roomId, createRoom.room);
-            int playerIndex = createRoom.room.PlayerJoin(userToken.PlayerData.Guid,userToken.PlayerData);
+
+            BaseRoom room = new BaseRoom(createRoom.RoomDesc,createRoom.Password);
+            id2rooms.Add(roomId, room);
+            int playerIndex = room.PlayerJoin(userToken.PlayerData);
             SendData(userToken, new CreateRoomS2C(playerIndex));
         }
 
@@ -87,7 +91,7 @@ namespace GameServer.Core.NetWork
                 return;
             }
             //加入是否成功
-            int foundIndex = room.PlayerJoin(userToken.PlayerData.Guid,userToken.PlayerData);
+            int foundIndex = room.PlayerJoin(userToken.PlayerData);
             if (foundIndex != -1)
             {                
                 foreach (var playerId in room.Players)
@@ -99,12 +103,13 @@ namespace GameServer.Core.NetWork
                     }
                 }
             }
-            SendData(userToken,new JoinRoomS2C(foundIndex, room));
+            SendData(userToken,new JoinRoomS2C(foundIndex, room.RoomState));
         }
 
         private void GetRoomList(UserToken userToken)
-        {            
-            SendData(userToken, new GetRoomListS2C(id2rooms.Values.ToList()));
+        {
+            List<RoomState> roomStates = (from rs in id2rooms select rs.Value.RoomState).ToList();
+            SendData(userToken, new GetRoomListS2C(roomStates));
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tools.User;
 
-namespace TF.Tools
+namespace GameServer.Core.User
 {
     public class UserToken
     {
@@ -39,6 +39,7 @@ namespace TF.Tools
 
         public UserToken()
         {
+            PlayerData = new UserData();
             PlayerData.Guid = Guid.NewGuid();
             this.Buffer = new List<byte>();
         }

@@ -54,18 +54,25 @@ namespace TF.Tools
     }
 
     [Serializable]
+    public class GameStart : SystemNetObject
+    {
+
+    }
+
+    [Serializable]
     public class CreateRoomC2S : SystemNetObject
     {
 
-        public BaseRoom room;
+        public RoomDesc RoomDesc;
 
-        public GameType gameType;
+        public String Password;
 
         public CreateRoomC2S() { }
 
-        public CreateRoomC2S(BaseRoom room)
+        public CreateRoomC2S(RoomDesc room,string password)
         {
-            this.room = room;
+            this.RoomDesc = room;
+            this.Password = password;
         }
     }
 
@@ -104,9 +111,9 @@ namespace TF.Tools
     public class JoinRoomS2C : SystemNetObject
     {
         public int PlayerId;
-        public BaseRoom Room;
+        public RoomState Room;
 
-        public JoinRoomS2C(int playerId,BaseRoom room)
+        public JoinRoomS2C(int playerId, RoomState room)
         {
             this.Room = room;
             this.PlayerId = playerId;
@@ -128,9 +135,9 @@ namespace TF.Tools
     [Serializable]
     public class GetRoomListS2C : SystemNetObject
     {
-        public List<BaseRoom> rooms;
+        public List<RoomState> rooms;
 
-        public GetRoomListS2C(List<BaseRoom> rooms)
+        public GetRoomListS2C(List<RoomState> rooms)
         {
             this.rooms = rooms;
         }

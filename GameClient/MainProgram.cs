@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TF.Tools;
+using Sample;
 
 namespace TF.GameClient
 {
@@ -28,27 +29,27 @@ namespace TF.GameClient
                             break;
                         case "CreateRoom":
                             Console.Write("Input ID : ");
-                            BaseRoom dpr = null;//= new BaseRoom(int.Parse(Console.ReadLine()));
-                            var bb = gameClient.CreateRoom(dpr);
-                            Console.WriteLine("CreateRoom Success? " + bb);
-                            Console.WriteLine("Success " + bb + "RoomId : " + dpr.Id);
+                            int id = int.Parse(Console.ReadLine());
+                            SampleRoomDesc srd = new SampleRoomDesc(id);
+                            var playerInRoom = gameClient.CreateRoom(srd, string.Empty);      
+                            Console.WriteLine("Success " + playerInRoom + "RoomId : " + srd.ID);
                             break;
                         case "JoinRoom":
                             Console.WriteLine("input RoomId");
-                            int id = int.Parse(Console.ReadLine());
+                            int rid = int.Parse(Console.ReadLine());
                             int playerId;
-                            var b = gameClient.JoinRoom(id,out playerId);
+                            var b = gameClient.JoinRoom(rid, out playerId);
                             Console.WriteLine("JoinRoom " + b + "\n playerId : " + playerId);
-                            Console.WriteLine(StringTools.ArrayToString(b.UserData));
+                            Console.WriteLine(StringTools.ArrayToString(b.UserDatas));
                             break;
                         case "GetRoomList":
                             Console.WriteLine("Searching");
-                            List<BaseRoom> rooms = gameClient.GetRoomList();
+                            List<RoomState> rooms = gameClient.GetRoomList();
                             Console.WriteLine("Find " + rooms.Count + " Room");
                             foreach (var baseRoom in rooms)
                             {
                                 Console.WriteLine(baseRoom.ToString());
-                                Console.WriteLine(StringTools.ArrayToString(baseRoom.UserData));
+                                Console.WriteLine(StringTools.ArrayToString(baseRoom.UserDatas));
                             }
                             break;
                         case "LeaveRoom":
@@ -73,7 +74,7 @@ namespace TF.GameClient
                 catch (Exception e) { Console.WriteLine(e); }
             }
         }
-        static void Handle(HauntedHouseNetObject hauntedHouseNetObject)
+        static void Handle(GameNetObject hauntedHouseNetObject)
         {
             Console.WriteLine(hauntedHouseNetObject);
         }

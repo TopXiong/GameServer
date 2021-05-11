@@ -17,5 +17,18 @@ namespace TF.Tools
 
         //房间Id号
         public int ID;
+        //游戏类型
+        public GameType GameType;
+
+        public RoomDesc(int ID)
+        {
+            this.ID = ID;
+        }
+
+        public override string ToString()
+        {
+            return " RoomID : " + ID;
+        }
+
     }
 }
