@@ -60,17 +60,17 @@ namespace GameServer.Core.NetWork
                 return;
             }
             id2rooms.Add(roomId, createRoom.room);
-            int playerIndex = createRoom.room.PlayerJoin(userToken.Guid,userToken.PlayerData);
+            int playerIndex = createRoom.room.PlayerJoin(userToken.PlayerData.Guid,userToken.PlayerData);
             SendData(userToken, new CreateRoomS2C(playerIndex));
         }
 
         private void JoinRoom(UserToken userToken, JoinRoomC2S joinRoomC2S)
         {            
             // Cheak if in room
-            var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.Guid)!=-1 select linqroom;
+            var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.PlayerData.Guid)!=-1 select linqroom;
             foreach (var Troom in linqrooms)
             {
-                Troom.Value.PlayerLeave(userToken.Guid);
+                Troom.Value.PlayerLeave(userToken.PlayerData.Guid);
             }
             //房间不存在
             if (!id2rooms.ContainsKey(joinRoomC2S.RoomId))
@@ -87,15 +87,15 @@ namespace GameServer.Core.NetWork
                 return;
             }
             //加入是否成功
-            int foundIndex = room.PlayerJoin(userToken.Guid,userToken.PlayerData);
+            int foundIndex = room.PlayerJoin(userToken.PlayerData.Guid,userToken.PlayerData);
             if (foundIndex != -1)
             {                
                 foreach (var playerId in room.Players)
                 {
-                    if (userToken.Guid != playerId && playerId != Guid.Empty)
+                    if (userToken.PlayerData.Guid != playerId && playerId != Guid.Empty)
                     {
                         //发送玩家加入消息
-                        SendData(id2players[playerId],(new PlayerJoinS2C(userToken.Guid)));
+                        SendData(id2players[playerId],(new PlayerJoinS2C(userToken.PlayerData.Guid)));
                     }
                 }
             }
@@ -115,12 +115,12 @@ namespace GameServer.Core.NetWork
         private void SetUserData(UserToken userToken, SetUserData setUserData)
         {
             userToken.PlayerData = setUserData.UserData;
-            var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.Guid) != -1 select linqroom;
+            var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.PlayerData.Guid) != -1 select linqroom;
             if (linqrooms.Count() > 0)
             {
                 var room = linqrooms.First().Value;
 
-                var playerid = room.ContainsPlayer(userToken.Guid);
+                var playerid = room.ContainsPlayer(userToken.PlayerData.Guid);
 
                 room.UserData[playerid] = userToken.PlayerData;
 
@@ -130,9 +130,9 @@ namespace GameServer.Core.NetWork
 
         private void LeaveRoom(UserToken userToken)
         {
-            Guid currentPlayId = userToken.Guid;
+            Guid currentPlayId = userToken.PlayerData.Guid;
             //找到含有玩家的房间 
-            var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.Guid)!=-1 select linqroom;
+            var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.PlayerData.Guid)!=-1 select linqroom;
 
             foreach(var baseRoom in linqrooms)
             {
@@ -141,7 +141,7 @@ namespace GameServer.Core.NetWork
                 {
                     if (playerId != Guid.Empty)
                     {
-                        SendData(id2players[playerId], (new PlayerLeaveS2C(userToken.Guid)));
+                        SendData(id2players[playerId], (new PlayerLeaveS2C(userToken.PlayerData.Guid)));
                     }
                 }
             }
@@ -162,10 +162,10 @@ namespace GameServer.Core.NetWork
             //如果是游戏数据,就交给游戏房间处理
             if (baseNetObject is GameNetObject)
             {
-                var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.Guid) != -1 select linqroom;
+                var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.PlayerData.Guid) != -1 select linqroom;
                 if (linqrooms.Count() > 0)
                 {
-                    linqrooms.First().Value.DataHandle(userToken.Guid, baseNetObject as GameNetObject);
+                    linqrooms.First().Value.DataHandle(userToken.PlayerData.Guid, baseNetObject as GameNetObject);
                 }
                 return;
             }
@@ -237,14 +237,14 @@ namespace GameServer.Core.NetWork
             userToken.ConnectTime = DateTime.Now;
             userToken.Remote = e.AcceptSocket.RemoteEndPoint;
             userToken.IPAddress = ((IPEndPoint)(e.AcceptSocket.RemoteEndPoint)).Address;
-            id2players[userToken.Guid] = userToken;
+            id2players[userToken.PlayerData.Guid] = userToken;
             acceptArgs.UserToken = userToken;
             acceptArgs.SetBuffer(new byte[1024], 0, 1024);
             if (!e.AcceptSocket.ReceiveAsync(acceptArgs))
             {
                 ProcessReceive(acceptArgs);
             }
-            SendData(userToken, new GetMyID(userToken.Guid));
+            SendData(userToken, new GetMyID(userToken.PlayerData.Guid));
             StartAccept(e);
         }
 

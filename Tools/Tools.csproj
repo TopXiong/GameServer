@@ -70,10 +70,13 @@
     <Compile Include="NetBaseTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Room.cs" />
+    <Compile Include="Room\RoomState.cs" />
+    <Compile Include="Room\RoomDesc.cs" />
     <Compile Include="StringTools.cs" />
     <Compile Include="SystemNetObject.cs" />
     <Compile Include="UserToken.cs" />
     <Compile Include="Math3D.cs" />
+    <Compile Include="User\UserData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

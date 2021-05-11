@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using HauntedHouse;
 using TF.Tools;
 
 namespace TF.GameClient
@@ -29,7 +28,7 @@ namespace TF.GameClient
                             break;
                         case "CreateRoom":
                             Console.Write("Input ID : ");
-                            HauntedHouseRoom dpr = new HauntedHouseRoom(int.Parse(Console.ReadLine()));
+                            BaseRoom dpr = null;//= new BaseRoom(int.Parse(Console.ReadLine()));
                             var bb = gameClient.CreateRoom(dpr);
                             Console.WriteLine("CreateRoom Success? " + bb);
                             Console.WriteLine("Success " + bb + "RoomId : " + dpr.Id);
@@ -56,12 +55,12 @@ namespace TF.GameClient
                             gameClient.LeaveRoom();
                             break;
                         case "Start":
-                            gameClient.Send(new GameStartMessage());
+                            //gameClient.Send(new GameStartMessage());
                             break;
                         case "ChangeUserData":
                             Console.WriteLine("Input Your Name");
                             string name = Console.ReadLine();
-                            gameClient.SendUserData(new HauntedHouseUserData(name,EntityType.GhostCat));
+                            //gameClient.SendUserData(new HauntedHouseUserData(name,EntityType.GhostCat));
                             break;
                         default:
                             Console.WriteLine("Error Command");

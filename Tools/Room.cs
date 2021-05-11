@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Tools.User;
+using System.Linq;
 
 namespace TF.Tools
 {
@@ -10,62 +12,55 @@ namespace TF.Tools
     }
 
     [Serializable]
-    public abstract class BaseRoom
+    public class BaseRoom
     {
-        //最大容纳人数
-        protected int m_maxPlayerNum;
-        //房间Id号
-        protected int m_id;
-        //玩家
-        protected Guid[] m_playersID;
-
-        protected UserToken.UserData[] m_userData;
+        //玩家数据
+        protected UserData[] m_userData;
 
         //房间密码
         protected string m_password;
-        //房主
-        protected int m_roomOwner;
-
-        public int CurrentPlayCount { get; private set; }
 
         /// <summary>
-        /// 玩家字典
+        /// 房间的配置
         /// </summary>
-        protected Dictionary<int, NetObjectState> m_playerDic = new Dictionary<int, NetObjectState>();
+        protected RoomDesc RoomDesc = new RoomDesc();
 
-        public Dictionary<int, NetObjectState> PlayerDic
-        {
-            get => m_playerDic;
-        }
+        /// <summary>
+        /// 房间的状态
+        /// </summary>
+        protected RoomState RoomState = new RoomState();
 
         protected BaseRoom(int maxPlayerNum, string password)
         {
-            m_playersID = new Guid[maxPlayerNum];
-            m_userData = new UserToken.UserData[maxPlayerNum];
-            this.m_maxPlayerNum = maxPlayerNum;
+            m_userData = new UserData[maxPlayerNum];
+            RoomDesc.MaxPlayerNum = maxPlayerNum;
             this.Password = password;
-            m_roomOwner = 0;
+            RoomState.RoomOwner = 0;
         }
         /// <summary>
         /// 房主位置
         /// </summary>
-        public int RoomOwnerIndex { get => m_roomOwner; private set => m_roomOwner = value; }
+        public int RoomOwnerIndex { get => RoomState.RoomOwner; private set => RoomState.RoomOwner = value; }
         /// <summary>
         /// 密码
         /// </summary>
         public string Password { get => m_password; private set => m_password = value; }
-        public Guid[] Players { get => m_playersID; private set => m_playersID = value; }
+        public Guid[] Players { get => (from x in m_userData
+                                        select x.Guid).ToArray();
+        }
 
-        public UserToken.UserData[] UserData => m_userData;
+        public int CurrentPlayCount { get => RoomState.CurrentPlayCount; protected set => RoomState.CurrentPlayCount=value; }
+
+        public UserData[] UserData => m_userData;
 
         public int MaxPlayerNum 
         { 
-            get => m_maxPlayerNum; 
+            get => RoomDesc.MaxPlayerNum; 
         }
         /// <summary>
         /// 房间ID
         /// </summary>
-        public int Id { get => m_id; set => m_id = value; }
+        public int Id { get => RoomDesc.ID;}
         protected BaseRoom() { }
 
         /// <summary>
@@ -180,7 +175,7 @@ namespace TF.Tools
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public virtual int ContainsPlayer(UserToken.UserData userData)
+        public virtual int ContainsPlayer(UserData userData)
         {
             for (int i = 0; i < Players.Length; i++)
             {
@@ -197,7 +192,7 @@ namespace TF.Tools
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public virtual int PlayerJoin(Guid player,UserToken.UserData userdata)
+        public virtual int PlayerJoin(Guid player,UserData userdata)
         {
             for (int i = 0; i < Players.Length; i++)
             {

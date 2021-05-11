@@ -5,17 +5,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Tools.User;
 
 namespace TF.Tools
 {
     public class UserToken
     {
-        [Serializable]
-        public abstract class UserData
-        {
-
-        }
-
         /// <summary>  
         /// 客户端IP地址  
         /// </summary>  
@@ -42,15 +37,9 @@ namespace TF.Tools
         public List<byte> Buffer { get; set; }
         public UserData PlayerData { get; set; }
 
-        #region Data
-
-        public Guid Guid { get; set; }
-
-        #endregion
-
         public UserToken()
         {
-            this.Guid = Guid.NewGuid();
+            PlayerData.Guid = Guid.NewGuid();
             this.Buffer = new List<byte>();
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tools.User;
 
 namespace TF.Tools
 {
@@ -43,9 +44,9 @@ namespace TF.Tools
     [Serializable]
     public class SetUserData: SystemNetObject
     {
-        public UserToken.UserData UserData;
+        public UserData UserData;
 
-        public SetUserData(UserToken.UserData userData)
+        public SetUserData(UserData userData)
         {
             UserData = userData;
         }

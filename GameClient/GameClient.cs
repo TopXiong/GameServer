@@ -1,5 +1,4 @@
-﻿using HauntedHouse;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -148,10 +147,10 @@ namespace TF.GameClient
         /// 登入后发送用户信息
         /// </summary>
         /// <param name="s"></param>
-        public void SendUserData(HauntedHouseUserData userData)
-        {
-            Send(new SetUserData(userData));
-        }
+        //public void SendUserData(UserDate userData)
+        //{
+        //    Send(new SetUserData(userData));
+        //}
 
         /// <summary>
         /// 离开房间
@@ -193,14 +192,14 @@ namespace TF.GameClient
         /// </summary>
         /// <param name="room">房间号</param>
         /// <returns>在房间中的id,-1为不成功</returns>
-        public HauntedHouseRoom JoinRoom(int roomID,out int playerInRoomID, string password = "")
+        public BaseRoom JoinRoom(int roomID,out int playerInRoomID, string password = "")
         {
             JoinRoomC2S joinRoom = new JoinRoomC2S(roomID, password);
             Send(joinRoom);
             //waitTimer.Start();
             wait.WaitOne();
             playerInRoomID = ((JoinRoomS2C)transmit).PlayerId;
-            return (HauntedHouseRoom)((JoinRoomS2C)transmit).Room;
+            return ((JoinRoomS2C)transmit).Room;
         }
 
         #endregion
