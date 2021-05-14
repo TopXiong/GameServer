@@ -9,7 +9,7 @@ using GameServer.Core;
 using GameServer.Core.NetWork;
 using GameServer.Core.Tools;
 using GameServer;
-using TF.Log;
+using GameServer.Core.Log;
 
 namespace GameServer
 {
@@ -18,16 +18,17 @@ namespace GameServer
     {
         static void Main(string[] args)
         {
-            Game.EventSystem.LoadAssembly(typeof(Game).Assembly);
-            Game.Awake();
-            Game.Start();
+            Server.EventSystem.LoadAssembly(typeof(Server).Assembly);
+            Server.EventSystem.LoadAssembly(typeof(Sample.Sample).Assembly);
+            Server.Awake();
+            Server.Start();
             while (true)
             {
                 try
                 {
                     Thread.Sleep(1);
-                    Game.Update();
-                    Game.LateUpdate();
+                    Server.Update();
+                    Server.LateUpdate();
                 }
                 catch (Exception e)
                 {

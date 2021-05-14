@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Linq;
-using TF.Tools;
-using TF.Log;
 using GameServer.Core.RoomSystem;
 using GameServer.Core.User;
+using Common;
+using Common.Tools;
+using Common.Room;
+using Common.NetObject;
 
 namespace GameServer.Core.NetWork
 {
@@ -40,8 +42,6 @@ namespace GameServer.Core.NetWork
             listenSocket.Bind(iPEndPoint);
             listenSocket.Listen(20);
             ReceiveClientData += DataHandle;
-            //绑定房间的send方法
-            BaseRoom.Send += (id, gameNetObject) => { SendData(id2players[id], gameNetObject); };
             StartAccept(null);
         }
 
@@ -64,7 +64,7 @@ namespace GameServer.Core.NetWork
 
             BaseRoom room = new BaseRoom(createRoom.RoomDesc,createRoom.Password);
             id2rooms.Add(roomId, room);
-            int playerIndex = room.PlayerJoin(userToken.PlayerData);
+            int playerIndex = room.PlayerJoin(userToken);
             SendData(userToken, new CreateRoomS2C(playerIndex));
         }
 
@@ -91,7 +91,7 @@ namespace GameServer.Core.NetWork
                 return;
             }
             //加入是否成功
-            int foundIndex = room.PlayerJoin(userToken.PlayerData);
+            int foundIndex = room.PlayerJoin(userToken);
             if (foundIndex != -1)
             {                
                 foreach (var playerId in room.Players)
@@ -131,6 +131,15 @@ namespace GameServer.Core.NetWork
 
             }
 
+        }
+
+        public void GameStart(UserToken userToken)
+        {
+            var linqrooms = from linqroom in id2rooms where linqroom.Value.ContainsPlayer(userToken.PlayerData.Guid) != -1 select linqroom;
+            if (linqrooms.Count() > 0)
+            {
+                linqrooms.First().Value.GameStart();
+            }
         }
 
         private void LeaveRoom(UserToken userToken)
@@ -185,31 +194,43 @@ namespace GameServer.Core.NetWork
             if (systemNeObject.GetType() == typeof(Msg))
             {
                 Msg(userToken,systemNeObject as Msg);
+                return;
             }
             // 创建房间
             else if (systemNeObject.GetType() == typeof(CreateRoomC2S))
             {
                 CreateRoom(userToken, systemNeObject as CreateRoomC2S);
+                return;
             }
             // 加入房间
             else if (systemNeObject.GetType() == typeof(JoinRoomC2S))
             {
                 JoinRoom(userToken,systemNeObject as JoinRoomC2S);
+                return;
             }
             //返回房间列表
             else if (systemNeObject.GetType() == typeof(GetRoomListC2S))
             {
                 GetRoomList(userToken);
+                return;
             }
             //离开房间
             else if (systemNeObject.GetType() == typeof(LeaveRoomC2S))
             {
                 LeaveRoom(userToken);
+                return;
             }
             //设置玩家信息
             else if (systemNeObject.GetType() == typeof(SetUserData))
             {
                 SetUserData(userToken, systemNeObject as SetUserData);
+                return;
+            }
+            //游戏开始
+            else if (systemNeObject.GetType() == typeof(GameStart))
+            {
+                GameStart(userToken);
+                return;
             }
         }
 
@@ -249,7 +270,7 @@ namespace GameServer.Core.NetWork
             {
                 ProcessReceive(acceptArgs);
             }
-            SendData(userToken, new GetMyID(userToken.PlayerData.Guid));
+            SendData(userToken, new GetMyUserData(userToken.PlayerData));
             StartAccept(e);
         }
 
@@ -375,7 +396,8 @@ namespace GameServer.Core.NetWork
         /// <returns></returns>
         public bool SendData(UserToken token, BaseNetObject baseNetObject)
         {
-            return SendData(token, NetBaseTool.ObjectToBytes(baseNetObject));
+            return token.Send(baseNetObject);
+            //return SendData(token, NetBaseTool.ObjectToBytes(baseNetObject));
         }
 
         /// <summary>  

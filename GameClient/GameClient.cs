@@ -4,9 +4,13 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using TF.Tools;
 using Timer = System.Timers.Timer;
-using TF.Log;
+using Common;
+using Common.User;
+using Common.Room;
+using Common.Tools;
+using Common.NetObject;
+
 namespace TF.GameClient
 {
     public class GameClient
@@ -31,9 +35,16 @@ namespace TF.GameClient
         /// <summary>
         /// 收到数据后的回调
         /// </summary>
-        private Action<GameNetObject> m_action;
+        public event Action<GameNetObject> ReceiveAction;
 
-        public Guid MyID { get; private set; }
+        /// <summary>
+        /// 游戏开始后的回调
+        /// </summary>
+        public event Action StartAction;
+
+        public UserData MyUserData { get; private set; }
+
+        public RoomState CurrentRoom { get; private set; }
 
         /// <summary>
         /// IP,端口
@@ -44,7 +55,7 @@ namespace TF.GameClient
         public GameClient(String ip, Int32 port, Action<GameNetObject> action)
         {
             m_clientSocket = new ClientSocket(ip, port);
-            m_action = action;
+            ReceiveAction += action;
             m_clientSocket.ServerDataHandler += Datahandle;
             //waitTimer = new Timer();
             //waitTimer.Interval = WaitTime;
@@ -64,11 +75,11 @@ namespace TF.GameClient
                 SystemNetObject systemNetObject = bno as SystemNetObject;
                 if(systemNetObject.GetType() == typeof(Msg))
                 {
-                    Logger.WriteLog(systemNetObject);
+                    Console.WriteLine(systemNetObject);
                 }
-                else if(systemNetObject.GetType() == typeof(GetMyID))
+                else if(systemNetObject.GetType() == typeof(GetMyUserData))
                 {
-                    MyID = (systemNetObject as GetMyID).playerId;
+                    MyUserData = (systemNetObject as GetMyUserData).userData;
                 }
                 else if (systemNetObject.GetType() == typeof(CreateRoomS2C))
                 {
@@ -93,6 +104,10 @@ namespace TF.GameClient
                 {
                     PlayerLeave?.Invoke((systemNetObject as PlayerLeaveS2C).playerId);
                 }
+                else if (systemNetObject.GetType() == typeof(GameStart))
+                {
+                    StartAction?.Invoke();
+                }
             }
             else
             {
@@ -101,7 +116,7 @@ namespace TF.GameClient
                 {
                     throw new ArgumentException(bno.GetType() + " Can't Used");
                 }
-                m_action(gno);
+                ReceiveAction?.Invoke(gno);
             }
             //防止死锁
             // wait.Set();
@@ -116,10 +131,6 @@ namespace TF.GameClient
             return m_clientSocket.Connent();
         }
 
-        /// <summary>
-        /// 构建一个HauntedHouseNetObject对象并发送,HauntedHouseNetObject类型放在Tools/Games/HauntedHouse下
-        /// </summary>
-        /// <param name="hauntedHouseNetObject"></param>
         public void Send(GameNetObject gno)
         {
             Send(gno);
@@ -144,13 +155,27 @@ namespace TF.GameClient
         }
 
         /// <summary>
+        /// 如果是房主，就发送游戏开始
+        /// </summary>
+        public void GameStart()
+        {
+            Send(new GameStart());
+        }
+
+        /// <summary>
         /// 登入后发送用户信息
         /// </summary>
         /// <param name="s"></param>
-        //public void SendUserData(UserDate userData)
-        //{
-        //    Send(new SetUserData(userData));
-        //}
+        public void SendUserData(UserData userData)
+        {
+            Send(new SetUserData(userData));
+        }
+
+        public void ChangeName(string name)
+        {
+            MyUserData.Name = name;
+            Send(new SetUserData(MyUserData));
+        }
 
         /// <summary>
         /// 离开房间

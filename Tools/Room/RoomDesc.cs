@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Common.NetObject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TF.Tools
+namespace Common.Room
 {
     /// <summary>
     /// 表示房间的配置信息

@@ -1,4 +1,5 @@
 ﻿using GameServer.Core.Base;
+using GameServer.Core.Interface;
 using System;
 using System.Collections.Generic;
 
@@ -62,7 +63,7 @@ namespace GameServer.Core.Tools
     /// <summary>
     /// 计时器管理
     /// </summary>
-    public class TimerManager:BaseGameObject
+    public class TimerManager: BaseSystemManager
     {
 
         private static TimerManager s_instance;
@@ -75,7 +76,7 @@ namespace GameServer.Core.Tools
             }
         }
 
-        public override void Awake()
+        public void Awake()
         {
             s_instance = this;
         }
@@ -100,7 +101,7 @@ namespace GameServer.Core.Tools
         /// </summary>
         private long m_minTime;
 
-        public override void Update()
+        public void Update()
         {
             if (m_timeId.Count == 0)
             {

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Common.Tools;
+using Common.User;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tools.User;
 
-namespace TF.Tools
+namespace Common.Room
 {
    /// <summary>
    /// 表示房间的当前状态

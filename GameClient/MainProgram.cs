@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TF.Tools;
 using Sample;
+using Common;
+using Common.Tools;
+using Common.Room;
+using Common.NetObject;
 
 namespace TF.GameClient
 {
@@ -15,6 +18,7 @@ namespace TF.GameClient
             var socketError = gameClient.Connent();
             gameClient.PlayerJoin += (id) => { Console.WriteLine("Player: " + id + " Join"); };
             gameClient.PlayerLeave += (id) => { Console.WriteLine("Player: " + id + " Leave"); };
+            gameClient.StartAction += () => Console.WriteLine("GameStart");
             while (true)
             {
                 try
@@ -49,19 +53,18 @@ namespace TF.GameClient
                             foreach (var baseRoom in rooms)
                             {
                                 Console.WriteLine(baseRoom.ToString());
-                                Console.WriteLine(StringTools.ArrayToString(baseRoom.UserDatas));
                             }
                             break;
                         case "LeaveRoom":
                             gameClient.LeaveRoom();
                             break;
                         case "Start":
-                            //gameClient.Send(new GameStartMessage());
+                            gameClient.GameStart();
                             break;
                         case "ChangeUserData":
                             Console.WriteLine("Input Your Name");
                             string name = Console.ReadLine();
-                            //gameClient.SendUserData(new HauntedHouseUserData(name,EntityType.GhostCat));
+                            gameClient.ChangeName(name);
                             break;
                         default:
                             Console.WriteLine("Error Command");

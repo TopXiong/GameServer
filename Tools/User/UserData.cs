@@ -4,21 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tools.User
+namespace Common.User
 {
     [Serializable]
     public class UserData
     {
-        public Guid Guid { get; set; }
+        public Guid Guid;
 
-        public UserData()
+        public string Name;
+
+        public UserData():this("NoName")
+        {
+            
+        }
+
+        public UserData(string name)
         {
             Guid = Guid.Empty;
+            this.Name = name;
         }
 
         public override string ToString()
         {
-            return "PlayerID : " + Guid;
+            return "PlayerID : " + Guid + " Name: " + Name;
         }
 
     }

@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace GameServer.Core
 {
-    public static class Game
+    public static class Server
     {
         public static EventSystem EventSystem => EventSystem.Instance;
 
@@ -16,7 +16,6 @@ namespace GameServer.Core
 
         public static void Awake()
         {
-            //engine.Awake();
             EventSystem.Awake();
         }
 
@@ -27,7 +26,6 @@ namespace GameServer.Core
 
         public static void Update()
         {
-            //engine.Update();
             EventSystem.Update();
         }
 

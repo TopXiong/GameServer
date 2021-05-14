@@ -28,4 +28,8 @@ namespace GameServer.Core.Interface
         void LateUpdate();
     }
 
+    public interface IMonoInterface: IAwakeInterface, IStartInterface, IUpdateInterface, ILateUpdateInterface
+    {
+
+    }
 }

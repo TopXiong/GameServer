@@ -1,16 +1,18 @@
-﻿using GameServer.Core.Attribute;
+﻿using Common.NetObject;
+using GameServer.Core.Attribute;
 using GameServer.Core.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GameServer.Core.Base
+namespace GameServer.Core.Component
 {
-    [ObjectSystem]
-    public abstract class BaseGameObject : IAwakeInterface, IStartInterface,IUpdateInterface,ILateUpdateInterface
+    public abstract class BaseComponentObject : IMonoInterface
     {
 
-        protected BaseGameObject m_instance;
+        private Guid ComponentID;
+
+        public virtual void DataHandle(ComponentSynNetObject csno) { }
 
         public virtual void Awake() { }
         public virtual void Start() { }
