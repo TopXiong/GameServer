@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,14 +42,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SampleRoomDesc.cs" />
+    <Compile Include="Sample.cs" />
+    <Compile Include="SampleNetObject\SampleNetGameObject.cs" />
+    <Compile Include="Room\SampleRoomDesc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripts\SampleManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Tools\Tools.csproj">
+    <ProjectReference Include="..\GameServer\GameServer.csproj">
+      <Project>{977495ca-2c9f-4732-8c9c-980ff36b03f3}</Project>
+      <Name>GameServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tools\Common.csproj">
       <Project>{0009e6c7-ccd1-45df-b728-138de059eac1}</Project>
-      <Name>Tools</Name>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
