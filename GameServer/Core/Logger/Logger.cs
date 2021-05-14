@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace TF.Log
+namespace GameServer.Core.Log
 {
     public static class Logger
     {

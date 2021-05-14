@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Tools.User;
 using System.Linq;
-using TF.Tools;
+using GameServer.Core.User;
+using Common.User;
+using Common.Room;
+using Common;
+using GameServer.Core.Game;
+using Common.NetObject;
 
 namespace GameServer.Core.RoomSystem
 {
-    [Serializable]
-    public class NetObjectState
-    {
-    }
-
-    [Serializable]
     public class BaseRoom
     {
+
+        public Scene Scene;
+
         //房间密码
         protected string m_password;
         protected Guid[] m_playersGuid;
@@ -30,6 +31,7 @@ namespace GameServer.Core.RoomSystem
         {
             RoomState = new RoomState(roomDesc);
             RoomState.RoomOwner = 0;
+            Users = new UserToken[roomDesc.MaxPlayerNum];
             m_playersGuid = new Guid[roomDesc.MaxPlayerNum];
             this.Password = password;
         }
@@ -41,11 +43,20 @@ namespace GameServer.Core.RoomSystem
         /// 密码
         /// </summary>
         public string Password { get => m_password; private set => m_password = value; }
+
         public Guid[] Players => m_playersGuid;
 
         public int CurrentPlayCount { get => RoomState.CurrentPlayCount; protected set => RoomState.CurrentPlayCount=value; }
 
+        /// <summary>
+        /// 会发给客户端的数据
+        /// </summary>
         public UserData[] UserData => RoomState.UserDatas;
+
+        /// <summary>
+        /// 玩家的网络数据
+        /// </summary>
+        public UserToken[] Users { get; }
 
         public int MaxPlayerNum 
         { 
@@ -55,7 +66,6 @@ namespace GameServer.Core.RoomSystem
         /// 房间ID
         /// </summary>
         public int Id { get => RoomDesc.ID;}
-        protected BaseRoom() { }
 
         /// <summary>
         /// 游戏数据处理
@@ -65,11 +75,10 @@ namespace GameServer.Core.RoomSystem
         public virtual void DataHandle(Guid userToken, GameNetObject gameNetObject)
         {
             Console.WriteLine(gameNetObject);
-            
-            SendDataToOtherRoomPlayer(gameNetObject, userToken);
+            int i = ContainsPlayer(userToken);
+            Scene.DateHandle(i, gameNetObject);
+            //SendDataToOtherRoomPlayer(gameNetObject, userToken);
         }
-
-        public static Action<Guid,GameNetObject> Send;
 
         /// <summary>
         /// 对房间所有的玩家发送消息
@@ -99,10 +108,16 @@ namespace GameServer.Core.RoomSystem
             {
                 if (notSends != playerId && playerId != Guid.Empty)
                 {
-                    //发送玩家加入消息
-                    Send(playerId, gameNetObject);
+                    Send(playerId,gameNetObject);
                 }
             }
+        }
+
+        protected bool Send(Guid playerId,GameNetObject gameNetObject)
+        {
+            int i = ContainsPlayer(playerId);
+            //发送玩家加入消息
+            return Users[i].Send(gameNetObject);
         }
 
         /// <summary>
@@ -125,9 +140,18 @@ namespace GameServer.Core.RoomSystem
             SendDataToRoomPlayer(gameNetObject, new List<Guid>());
         }
 
+        /// <summary>
+        /// 开始游戏
+        /// </summary>
         public virtual void GameStart()
         {
-
+            Scene = EventSystem.Instance.GetMonoInterface<Scene>();
+            Scene.Init(RoomState.CurrentPlayCount,RoomDesc.GameType);
+            foreach (var user in Users)
+            {
+                if(user != null)
+                    user.Send(new GameStart());
+            }
         }
 
         /// <summary>
@@ -142,6 +166,7 @@ namespace GameServer.Core.RoomSystem
                 {
                     Players[i] = Guid.Empty;
                     UserData[i] = null;
+                    Users[i] = null;
                     CurrentPlayCount--;
                     return;
                 }
@@ -170,15 +195,17 @@ namespace GameServer.Core.RoomSystem
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public virtual int PlayerJoin(UserData userdata)
+        public virtual int PlayerJoin(UserToken user)
         {
             for (int i = 0; i < Players.Length; i++)
             {
+                //Find Enpty Sit
                 if (Players[i] == Guid.Empty)
                 {
                     CurrentPlayCount++;
-                    Players[i] = userdata.Guid;
-                    UserData[i] = userdata;
+                    Users[i] = user;
+                    Players[i] = user.PlayerData.Guid;
+                    UserData[i] = user.PlayerData;
                     return i;
                 }
             }

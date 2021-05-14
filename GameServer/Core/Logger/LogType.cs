@@ -1,4 +1,4 @@
-﻿namespace TF.Log
+﻿namespace GameServer.Core.Log
 {
     public enum LogType
     {
